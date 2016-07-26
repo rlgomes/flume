@@ -1,0 +1,8 @@
+build
+dist
+env
+*.pyc
+flume.egg-info/
+.eggs/
+htmlcov
+.coverage

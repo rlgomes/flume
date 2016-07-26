@@ -1,0 +1,6 @@
+coverage==4.1
+docker-py==1.8.1
+Flask==0.10.1
+robber==1.0.1
+bunch==1.0.1
+mock==2.0.0
