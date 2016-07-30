@@ -61,7 +61,7 @@ class ElasticTest(unittest.TestCase):
             (
                 read('elastic',
                      index='bananas',
-                     where='foo=="bananas"')
+                     filter='foo=="bananas"')
             ).execute()
         except Exception as exception:
             expect(str(exception)).to.contain('no such index')
@@ -72,7 +72,7 @@ class ElasticTest(unittest.TestCase):
         (
             read('elastic',
                  index='test_data',
-                 where='foo=="bananas"')
+                 filter='foo=="bananas"')
             | memory(results)
         ).execute()
 
@@ -84,7 +84,7 @@ class ElasticTest(unittest.TestCase):
         (
             read('elastic',
                  index='test_data',
-                 where='integer > 0',
+                 filter='integer > 0',
                  batch=2)
             | memory(results)
         ).execute()
@@ -93,7 +93,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_eq_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string == "h"')
+            read('elastic', index='test_data', filter='string == "h"')
             | memory(results)
         ).execute()
 
@@ -104,7 +104,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_eq_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer == 8')
+            read('elastic', index='test_data', filter='integer == 8')
             | memory(results)
         ).execute()
 
@@ -115,7 +115,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_eq_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float == 8.0')
+            read('elastic', index='test_data', filter='float == 8.0')
             | memory(results)
         ).execute()
 
@@ -126,7 +126,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_neq_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string != "h"')
+            read('elastic', index='test_data', filter='string != "h"')
             | memory(results)
         ).execute()
 
@@ -145,7 +145,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_neq_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer != 8')
+            read('elastic', index='test_data', filter='integer != 8')
             | memory(results)
         ).execute()
 
@@ -164,7 +164,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_neq_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float != 8.0')
+            read('elastic', index='test_data', filter='float != 8.0')
             | memory(results)
         ).execute()
 
@@ -183,7 +183,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gt_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string > "g"')
+            read('elastic', index='test_data', filter='string > "g"')
             | memory(results)
         ).execute()
 
@@ -196,7 +196,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gt_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer > 7')
+            read('elastic', index='test_data', filter='integer > 7')
             | memory(results)
         ).execute()
 
@@ -209,7 +209,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gt_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float > 7.0')
+            read('elastic', index='test_data', filter='float > 7.0')
             | memory(results)
         ).execute()
 
@@ -222,7 +222,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gte_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string >= "h"')
+            read('elastic', index='test_data', filter='string >= "h"')
             | memory(results)
         ).execute()
 
@@ -235,7 +235,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gte_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer >= 8')
+            read('elastic', index='test_data', filter='integer >= 8')
             | memory(results)
         ).execute()
 
@@ -248,7 +248,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_gte_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float >= 8.0')
+            read('elastic', index='test_data', filter='float >= 8.0')
             | memory(results)
         ).execute()
 
@@ -261,7 +261,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lt_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string < "d"')
+            read('elastic', index='test_data', filter='string < "d"')
             | memory(results)
         ).execute()
 
@@ -274,7 +274,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lt_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer < 4')
+            read('elastic', index='test_data', filter='integer < 4')
             | memory(results)
         ).execute()
 
@@ -287,7 +287,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lt_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float < 4.0')
+            read('elastic', index='test_data', filter='float < 4.0')
             | memory(results)
         ).execute()
 
@@ -300,7 +300,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lte_string(self):
         results = []
         (
-            read('elastic', index='test_data', where='string <= "c"')
+            read('elastic', index='test_data', filter='string <= "c"')
             | memory(results)
         ).execute()
 
@@ -313,7 +313,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lte_integer(self):
         results = []
         (
-            read('elastic', index='test_data', where='integer <= 3')
+            read('elastic', index='test_data', filter='integer <= 3')
             | memory(results)
         ).execute()
 
@@ -326,7 +326,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_filter_lte_float(self):
         results = []
         (
-            read('elastic', index='test_data', where='float <= 3.0')
+            read('elastic', index='test_data', filter='float <= 3.0')
             | memory(results)
         ).execute()
 
@@ -339,7 +339,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_and_filter(self):
         results = []
         (
-            read('elastic', index='test_data', where='string == "a" and float == 1.0')
+            read('elastic', index='test_data', filter='string == "a" and float == 1.0')
             | memory(results)
         ).execute()
 
@@ -350,7 +350,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_or_filter(self):
         results = []
         (
-            read('elastic', index='test_data', where='string == "a" or float == 3.0')
+            read('elastic', index='test_data', filter='string == "a" or float == 3.0')
             | memory(results)
         ).execute()
 
@@ -362,7 +362,7 @@ class ElasticTest(unittest.TestCase):
     def test_elastic_read_with_not_filter(self):
         results = []
         (
-            read('elastic', index='test_data', where='not(string == "h")')
+            read('elastic', index='test_data', filter='not(string == "h")')
             | memory(results)
         ).execute()
 

@@ -8,7 +8,7 @@ from elasticsearch import Elasticsearch, helpers
 
 from flume import logger, moment
 from flume.adapters.adapter import adapter
-from flume.adapters.elastic.query import where_to_es_query
+from flume.adapters.elastic.query import filter_to_es_query
 from flume.exceptions import FlumineException
 from flume.point import Point
 
@@ -26,14 +26,14 @@ class elastic(adapter):
                  host='localhost',
                  port=9200,
                  time='time',
-                 where=None,
+                 filter=None,
                  batch=1024):
         self.index = index
         self.type = type
         self.host = host
         self.port = port
         self.time = time
-        self.where = where
+        self.filter = filter
         self.batch = batch
         self.clients = {}
 
@@ -55,7 +55,7 @@ class elastic(adapter):
         points = []
         client = self._get_elasticsearch(self.host, self.port)
 
-        query = where_to_es_query(self.where)
+        query = filter_to_es_query(self.filter)
         logger.debug('es query %s' % json.dumps(query))
 
         for result in helpers.scan(client,
