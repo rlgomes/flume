@@ -84,17 +84,17 @@ def to_es_query(node):
 
     raise Exception('unhandled %s' % node)
 
-def where_to_es_query(where_expr):
+def filter_to_es_query(filter_expr):
     """
     take a filter expression such as `foo=="bar"` and convert it into
     the corresponding ES query
     """
-    if where_expr is None:
+    if filter_expr is None:
         return {'match_all': {}}
     else:
         try:
-            tree = ast.parse(where_expr)
+            tree = ast.parse(filter_expr)
             return {'constant_score': to_es_query(tree)}
         except Exception as exception:
-            raise FlumineException('invalid where expression: %s - %s' %
-                                   (where_expr, exception))
+            raise FlumineException('invalid filter expression: %s - %s' %
+                                   (filter_expr, exception))

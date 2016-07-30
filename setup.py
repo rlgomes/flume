@@ -9,7 +9,7 @@ def load(filename):
 
 setup(
     name='flume',
-    version='0.1',
+    version='0.2',
     author='Rodney Gomes',
     author_email='rodneygomes@gmail.com',
     url='',
