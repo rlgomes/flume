@@ -8,12 +8,14 @@ import unittest
 
 import json
 import logging
+import mock
 import requests
 
 from flask import Flask, request, Response
 from robber import expect
 
 from flume import *
+
 
 # silence flask logging
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -44,11 +46,22 @@ class HTTPTestServer(threading.Thread):
                             status=200,
                             mimetype='application/json')
 
+        @app.route('/fail')
+        def fail():
+            return Response(request.arg.get('message', 'Bad Request'),
+                            status=int(request.args.get('status', 400)))
+
         @app.route('/garbage')
         def garbage():
             return Response('garbage',
                             status=200,
                             mimetype='application/json')
+
+        @app.route('/syslog')
+        def syslog():
+            return Response(open('examples/grok/syslog').read(),
+                            status=200,
+                            mimetype='text/plain')
 
         @app.route('/points')
         def points():
@@ -132,6 +145,36 @@ class HttpTest(unittest.TestCase):
     def tearDownClass(cls):
         requests.post(_BASEURL + '/shutdown')
 
+    @mock.patch('flume.logger.warn')
+    def test_http_read_with_no_time_field_produces_warning(self, mock_warn):
+        results = []
+        (
+            read('http',
+                 method='GET',
+                 url=_BASEURL + '/syslog',
+                 format='grok',
+                 pattern='%{SYSLOGLINE}')
+            | memory(results)
+        ).execute()
+
+        expect(len(results)).to.eq(274)
+        expect(len(mock_warn.call_args_list)).to.eq(274)
+        expect(mock_warn.call_args_list).to.eq([
+            mock.call('point missing time field "time"') for _ in range(0, 274)
+        ])
+
+    def test_http_read_with_bad_http_response(self):
+        results = []
+        try:
+            (
+                read('http',
+                     url=_BASEURL + '/fail?status=500&message=Internal Server Error')
+            ).execute()
+
+            raise Exception('previous code should have failed')
+        except FlumineException as exception:
+            expect(exception.message).to.contain('Internal Server Error')
+
     def test_http_read_with_failure(self):
         results = []
         try:
@@ -178,6 +221,19 @@ class HttpTest(unittest.TestCase):
         ).execute()
 
         expect(results).to.have.length(5)
+
+    def test_http_write_with_bad_http_response(self):
+        results = []
+        try:
+            (
+                emit(limit=1, start='2016-01-01')
+                | write('http',
+                        url=_BASEURL + '/fail?status=500&message=Internal Server Error')
+            ).execute()
+
+            raise Exception('previous code should have failed')
+        except FlumineException as exception:
+            expect(exception.message).to.contain('Internal Server Error')
 
     def test_http_write_a_point_and_read_it_back(self):
         results = []
@@ -258,8 +314,38 @@ class HttpTest(unittest.TestCase):
                  method='GET',
                  url=_BASEURL + '/points?count=2&page=3')
             | reduce(count=count())
-            | keep ('count')
+            | keep('count')
             | memory(results)
         ).execute()
 
         expect(results).to.eq([{'count': 6}])
+
+    def test_http_read_can_not_follow_link_header(self):
+        results = []
+        (
+            read('http',
+                 method='GET',
+                 url=_BASEURL + '/points?count=2&page=3',
+                 follow_link=False)
+            | reduce(count=count())
+            | keep('count')
+            | memory(results)
+        ).execute()
+
+        expect(results).to.eq([{'count': 2}])
+
+    def test_http_read_can_handle_grok_format_corectly(self):
+        results = []
+        (
+            read('http',
+                 method='GET',
+                 url=_BASEURL + '/syslog',
+                 format='grok',
+                 pattern='%{SYSLOGLINE}',
+                 time='timestamp')
+            | reduce(count=count())
+            | keep ('count')
+            | memory(results)
+        ).execute()
+
+        expect(results).to.eq([{'count': 274}])

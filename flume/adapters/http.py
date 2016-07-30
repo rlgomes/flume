@@ -6,8 +6,34 @@ import requests_cache
 
 from flume import logger, moment
 from flume.adapters.adapter import adapter
+from flume.adapters import streamers
 from flume.exceptions import FlumineException
 from flume.point import Point
+
+
+class RequestsStream(object):
+    
+    def __init__(self, response):
+        self.response = response
+
+    def read(self, size=1024):
+        return self.response.iter_content(chunk_size=size)
+    
+    def readlines(self):
+        tail = ''
+
+        for data in self.read():
+            data = tail + data
+            lines = data.split('\n')
+
+            head = lines[:-1]
+            tail = lines[-1]
+
+            for line in head:
+                yield line
+
+        for line in tail:
+            yield line
 
 
 class http(adapter):
@@ -24,7 +50,9 @@ class http(adapter):
                  time='time',
                  filter=None,
                  follow_link=True,
-                 cache=None):
+                 format=None,
+                 cache=None,
+                 **kwargs):
         self.url = url
         self.method = method
         self.headers = headers
@@ -32,6 +60,12 @@ class http(adapter):
         self.filter = filter
         self.follow_link = follow_link
         self.cache = cache
+
+        if format is not None:
+            self.streamer = streamers.get_streamer(format, **kwargs)
+
+        else:
+            self.streamer = None
 
     def read(self):
         """
@@ -44,12 +78,22 @@ class http(adapter):
             if self.cache is not None:
                 requests_cache.install_cache(self.cache)
 
-            response = requests.request(self.method, url, headers=self.headers)
+            def verify_response(response):
+                if response.status_code != 200:
+                    raise FlumineException('%s: %s' % (response.status_code, response.text))
 
-            if response.status_code != 200:
-                raise FlumineException(response.text)
+            if self.streamer is not None:
+                response = requests.request(self.method,
+                                            url,
+                                            headers=self.headers,
+                                            stream=True)
+                verify_response(response)
+                data = self.streamer.read(RequestsStream(response))
 
-            data = response.json()
+            else:
+                response = requests.request(self.method, url, headers=self.headers)
+                verify_response(response)
+                data = response.json()
 
             points = []
             for point in data:
@@ -58,10 +102,11 @@ class http(adapter):
 
                 if self.time in point:
                     point.time = moment.date(point[self.time])
-                    points.append(point)
 
                 else:
                     logger.warn('point missing time field "%s"' % self.time)
+
+                points.append(point)
 
             yield points
 
@@ -79,9 +124,6 @@ class http(adapter):
         for point in points:
             payload.append(point.json())
 
-        if self.cache is not None:
-            requests_cache.install_cache(self.cache)
-
         response = requests.request(self.method,
                                     self.url,
                                     headers=self.headers,
@@ -90,6 +132,3 @@ class http(adapter):
         if response.status_code != 200:
             raise FlumineException('received bad response with %d: %s' %
                                    (response.status_code, response.text))
-
-    def eof(self):
-        pass
