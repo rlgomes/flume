@@ -12,7 +12,7 @@ class barchart(sink):
     name = 'barchart'
 
     def __init__(self,
-                 name,
+                 view,
                  series='name',
                  category='time',
                  value='value',
@@ -21,7 +21,7 @@ class barchart(sink):
         self.series = series
         self.category = category
         self.value = value
-        self.view = get_view(name, **kwargs)
+        self.view = get_view(view, **kwargs)
 
     def loop(self):
         series = {}

@@ -9,15 +9,6 @@ from flume import moment, node, Point
 
 
 class emit(node):
-    """
-    # emit
-
-    The emit source is primarily used for testing and can be used to generate
-    points from a specific point in time at a specific interval
-
-    usage: emit(limit=10, start='2012-01-01', every='1h') | ...
-
-    """
 
     name = 'emit'
 

@@ -5,15 +5,6 @@ from flume import node
 
 
 class tail(node):
-    """
-    # tail
-
-    The tail processor is used to only keep the last N elements and throw
-    away all other remaining points
-
-    usage: ... | tail(N) | ...
-
-    """
 
     name = 'tail'
 

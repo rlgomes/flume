@@ -10,15 +10,6 @@ def islambda(something):
     return inspect.isfunction(something) and something.__name__ == '<lambda>'
 
 class filter(node):
-    """
-    # filter
-
-    The filter processor will only allow points to pass this node in the stream
-    if they satisfy the condition provided
-
-    usage: ... | filter(filter_expression) | ...
-
-    """
 
     name = 'filter'
 

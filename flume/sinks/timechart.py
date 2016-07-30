@@ -12,13 +12,14 @@ class timechart(sink):
     name = 'timechart'
 
     def __init__(self,
-                 name, series='name',
+                 view,
+                 series='name',
                  yvalue='value',
                  **kwargs):
         sink.__init__(self)
         self.series = series
         self.yvalue = yvalue
-        self.view = get_view(name, **kwargs)
+        self.view = get_view(view, **kwargs)
 
     def loop(self):
         series = {}

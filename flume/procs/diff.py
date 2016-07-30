@@ -7,9 +7,6 @@ from flume import node
 
 
 class diff(node):
-    """
-    diff processor
-    """
 
     name = 'diff'
 

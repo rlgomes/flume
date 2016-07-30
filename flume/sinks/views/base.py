@@ -33,4 +33,3 @@ class base(object):
                            bars for the same value of x.
         """
         raise FlumineException('implement me')
-

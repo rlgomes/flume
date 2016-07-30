@@ -5,15 +5,6 @@ from flume import node, Point
 
 
 class keep(node):
-    """
-    # keep
-
-    The keep processor is used to to remove unwanted fields from the stream by
-    specifying the ones you want to actually keep
-
-    usage: ... | keep(field,...,fieldN) | ...
-
-    """
 
     name = 'keep'
 

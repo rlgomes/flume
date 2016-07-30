@@ -1,0 +1,58 @@
+site_name: Flume
+site_author: Rodney Gomes <rodneygomes@gmail.com>
+include_next_prev: false
+
+pages: 
+
+- Home: 'index.md'
+- Overview: 'overview.md'
+- User Guide:
+    - Installation: 'installation.md'
+    - First Steps: 'first_steps.md'
+- Documentation:
+    - Adapters:
+        - Streamers:
+            - 'overview': 'adapters/streamers/index.md'
+            - 'csv': 'adapters/streamers/csv.md'
+            - 'grok': 'adapters/streamers/grok.md'
+            - 'json': 'adapters/streamers/json.md'
+            - 'jsonl': 'adapters/streamers/jsonl.md'
+        - 'overview': 'adapters/index.md'
+        - 'elastic': 'adapters/elastic.md'
+        - 'http': 'adapters/http.md'
+        - 'stdio': 'adapters/stdio.md'
+    - Moments: 'moments.md'
+    - Procs:
+        - 'overview': 'procs/index.md'
+        - 'diff': 'procs/diff.md'
+        - 'filter': 'procs/filter.md'
+        - 'head': 'procs/head.md'
+        - 'intersect': 'procs/intersect.md'
+        - 'keep': 'procs/keep.md'
+        - 'put': 'procs/put.md'
+        - 'reduce': 'procs/reduce/index.md'
+        - Reducers:
+            - 'overview': 'procs/reduce/reducers/index.md'
+            - 'count': 'procs/reduce/reducers/count.md'
+            - 'iterate': 'procs/reduce/reducers/iterate.md'
+            - 'maximum': 'procs/reduce/reducers/maximum.md'
+            - 'minimum': 'procs/reduce/reducers/minimum.md'
+        - 'remove': 'procs/remove.md'
+        - 'sort': 'procs/sort.md'
+        - 'tail': 'procs/tail.md'
+        - 'union': 'procs/union.md'
+    - Sinks:
+        - Views:
+            - 'overview': 'sinks/views/index.md'
+            - 'gnuplot': 'sinks/views/gnuplot.md'
+            - 'pygal': 'sinks/views/pygal.md'
+        - 'overview': 'sinks/index.md'
+        - 'barchart': 'sinks/barchart.md'
+        - 'linechart': 'sinks/linechart.md'
+        - 'memory': 'sinks/memory.md'
+        - 'timechart': 'sinks/timechart.md'
+        - 'write': 'sinks/write.md'
+    - Sources:
+        - 'overview': 'sources/index.md'
+        - 'emit': 'sources/emit.md'
+        - 'read': 'sources/read.md'
