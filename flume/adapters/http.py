@@ -12,13 +12,13 @@ from flume.point import Point
 
 
 class RequestsStream(object):
-    
+
     def __init__(self, response):
         self.response = response
 
     def read(self, size=1024):
         return self.response.iter_content(chunk_size=size)
-    
+
     def readlines(self):
         tail = ''
 
@@ -43,6 +43,7 @@ class http(adapter):
 
     name = 'http'
 
+
     def __init__(self,
                  url=None,
                  method='GET',
@@ -52,6 +53,7 @@ class http(adapter):
                  follow_link=True,
                  format=None,
                  cache=None,
+                 array=True,
                  **kwargs):
         self.url = url
         self.method = method
@@ -60,6 +62,7 @@ class http(adapter):
         self.filter = filter
         self.follow_link = follow_link
         self.cache = cache
+        self.array = array
 
         if format is not None:
             self.streamer = streamers.get_streamer(format, **kwargs)
@@ -119,11 +122,7 @@ class http(adapter):
             else:
                 break
 
-    def write(self, points):
-        payload = []
-        for point in points:
-            payload.append(point.json())
-
+    def __push(self, payload):
         response = requests.request(self.method,
                                     self.url,
                                     headers=self.headers,
@@ -132,3 +131,16 @@ class http(adapter):
         if response.status_code != 200:
             raise FlumineException('received bad response with %d: %s' %
                                    (response.status_code, response.text))
+
+    def write(self, points):
+        if self.array:
+            payload = []
+
+            for point in points:
+                payload.append(point.json())
+
+            self.__push(payload)
+
+        else:
+            for point in points:
+                self.__push(point.json())
