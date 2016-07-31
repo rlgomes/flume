@@ -54,6 +54,7 @@ class http(adapter):
                  format=None,
                  cache=None,
                  array=True,
+                 status=[200],
                  **kwargs):
         self.url = url
         self.method = method
@@ -63,6 +64,11 @@ class http(adapter):
         self.follow_link = follow_link
         self.cache = cache
         self.array = array
+
+        if not isinstance(status, list):
+            status = [status]
+
+        self.status = status
 
         if format is not None:
             self.streamer = streamers.get_streamer(format, **kwargs)
@@ -82,7 +88,7 @@ class http(adapter):
                 requests_cache.install_cache(self.cache)
 
             def verify_response(response):
-                if response.status_code != 200:
+                if response.status_code not in self.status:
                     raise FlumineException('%s: %s' % (response.status_code, response.text))
 
             if self.streamer is not None:
@@ -128,7 +134,7 @@ class http(adapter):
                                     headers=self.headers,
                                     json=payload)
 
-        if response.status_code != 200:
+        if response.status_code not in self.status:
             raise FlumineException('received bad response with %d: %s' %
                                    (response.status_code, response.text))
 

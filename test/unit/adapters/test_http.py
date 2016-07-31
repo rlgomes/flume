@@ -49,6 +49,37 @@ class HttpTest(unittest.TestCase):
         ])
 
     @mock.patch('requests.request')
+    def test_http_read_with_expected_400_status(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 400,
+            'text': 'Bad Request',
+            'headers': [],
+            'json': lambda: []
+        })
+
+        (
+            read('http',
+                 url='http://localhost:8080/fail',
+                 status=400)
+        ).execute()
+
+    @mock.patch('requests.request')
+    def test_http_write_with_expected_400_status(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 400,
+            'text': 'Bad Request',
+            'headers': [],
+            'json': lambda: []
+        })
+
+        (
+            emit(limit=1)
+            | write('http',
+                 url='http://localhost:8080/fail',
+                 status=400)
+        ).execute()
+
+    @mock.patch('requests.request')
     def test_http_read_with_bad_http_response(self, mock_request):
         mock_request.return_value = dici(**{
             'status_code': 500,
