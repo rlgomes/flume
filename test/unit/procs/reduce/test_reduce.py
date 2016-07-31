@@ -9,6 +9,37 @@ from flume import *
 
 class ReduceTest(unittest.TestCase):
 
+    def test_reduce_to_a_static_value(self):
+        results = []
+        (
+            emit(limit=5, every='0.001s')
+            | reduce(count=0)
+            | keep('count')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([{'count': 0}])
+
+    def test_reduce_field_with_interpolated_field_value(self):
+        results = []
+        (
+            emit(limit=5, every='0.001s')
+            | put(count=count())
+            | reduce(message='count is {count}')
+            | keep('message')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([{'message': 'count is 5'}])
+
+    def test_reduce_field_with_interpolated_time_value(self):
+        results = []
+        (
+            emit(limit=5, start='2016-01-01')
+            | reduce(message='last point at "{time}"')
+            | keep('message')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([{'message': 'last point at "2016-01-01T00:00:04.000Z"'}])
+
     def test_reduce_to_a_count(self):
         results = []
         (

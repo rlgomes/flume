@@ -32,7 +32,12 @@ class put(node):
                     if isinstance(value, reducer):
                         value.update(point)
                         point[key] = value.result()
+
                     else:
-                        point[key] = value
+                        if isinstance(value, str) or isinstance(value, unicode):
+                            point[key] = value.format(**point.json())
+
+                        else:
+                            point[key] = value
 
             self.push(points)
