@@ -45,3 +45,31 @@ class PutTest(unittest.TestCase):
             {'foo': 1, 'fizz': 'buzz'},
             {'foo': 1, 'fizz': 'buzz'}
         ])
+
+    def test_put_field_value_interpolations(self):
+        results = []
+        (
+            emit(limit=3, start='2013-01-01')
+            | put(count=count(), message='this is line #{count}')
+            | remove('time', 'count')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([
+            {'message': 'this is line #1'},
+            {'message': 'this is line #2'},
+            {'message': 'this is line #3'}
+        ])
+
+    def test_put_time_value_interpolations(self):
+        results = []
+        (
+            emit(limit=3, start='2013-01-01')
+            | put(count=count(), message='this happened at "{time}"')
+            | remove('time', 'count')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([
+            {'message': 'this happened at "2013-01-01T00:00:00.000Z"'},
+            {'message': 'this happened at "2013-01-01T00:00:01.000Z"'},
+            {'message': 'this happened at "2013-01-01T00:00:02.000Z"'}
+        ])

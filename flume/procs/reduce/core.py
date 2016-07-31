@@ -142,7 +142,11 @@ class reduce(node):
                         fields_copy[key] = value.result()
 
                     else:
-                        fields_copy[key] = value
+                        if isinstance(value, str) or isinstance(value, unicode):
+                            fields_copy[key] = value.format(**point.json())
+
+                        else:
+                            fields_copy[key] = value
 
                     results[by_key][key] = fields_copy[key]
 
