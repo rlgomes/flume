@@ -7,151 +7,32 @@ import time
 import unittest
 
 import json
-import logging
 import mock
 import requests
 
-from flask import Flask, request, Response
+from dici import dici
 from robber import expect
 
 from flume import *
-
-
-# silence flask logging
-logging.getLogger('werkzeug').setLevel(logging.ERROR)
-
-_HOST = '0.0.0.0'
-_PORT = 22222
-_BASEURL = 'http://%s:%d' % (_HOST, _PORT)
-
-
-class HTTPTestServer(threading.Thread):
-
-    def __init__(self):
-        threading.Thread.__init__(self)
-
-    def run(self):
-
-        class MyFlask(Flask):
-
-            def __init__(self, *args, **kwargs):
-                super(MyFlask, self).__init__(*args, **kwargs)
-                self.db = {}
-
-        app = MyFlask(__name__)
-
-        @app.route('/empty')
-        def empty():
-            return Response('[]',
-                            status=200,
-                            mimetype='application/json')
-
-        @app.route('/fail')
-        def fail():
-            return Response(request.arg.get('message', 'Bad Request'),
-                            status=int(request.args.get('status', 400)))
-
-        @app.route('/garbage')
-        def garbage():
-            return Response('garbage',
-                            status=200,
-                            mimetype='application/json')
-
-        @app.route('/syslog')
-        def syslog():
-            return Response(open('examples/grok/syslog').read(),
-                            status=200,
-                            mimetype='text/plain')
-
-        @app.route('/points')
-        def points():
-            page = int(request.args.get('page', '1'))
-            count = int(request.args.get('count', '3'))
-            start = request.args.get('start', 'now')
-            every = request.args.get('every', '1s')
-
-            start = moment.date(start)
-            every = moment.duration(every)
-            current_time = start
-
-            result = []
-            headers = {}
-
-            if page > 1:
-                link = '<%s/points?page=%d&count=%d>; rel="next"' % \
-                       (_BASEURL, page - 1, count)
-                headers['link'] = link
-
-            for index in range(0, count):
-                result.append({
-                    'time': moment.datetime_to_iso8601(current_time)
-                })
-                current_time += every
-
-            return Response(json.dumps(result),
-                            status=200,
-                            mimetype='application/json',
-                            headers=headers)
-
-        @app.route('/store', methods=['PUT', 'GET'])
-        def store():
-            key = request.args.get('key')
-
-            if request.method == 'PUT':
-                app.db[key] = json.loads(request.data)
-                return Response(status=200)
-
-            if request.method == 'GET':
-                return Response(json.dumps(app.db[key]),
-                                status=200,
-                                mimetype='application/json')
-
-        @app.route('/shutdown', methods=['POST'])
-        def shutdown():
-            shutit = request.environ.get('werkzeug.server.shutdown')
-
-            if shutit is None:
-                raise RuntimeError('not running with the werkzeug server')
-
-            shutit()
-
-            return Response(status=200)
-
-        try:
-            app.run(host=_HOST, port=_PORT)
-        except:
-            # ignore failures at shutdown
-            pass
-
+from flume import moment
 
 class HttpTest(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.server = HTTPTestServer()
-        cls.server.start()
-
-        # wait for the server to come up
-        # XXX: should set a timeout
-        response = None
-        while response is None or response.status_code != 200:
-            time.sleep(0.1)
-            try:
-                response = requests.get(_BASEURL + '/empty')
-            except:
-                pass
-
-    @classmethod
-    def tearDownClass(cls):
-        requests.post(_BASEURL + '/shutdown')
-
+    @mock.patch('requests.request')
     @mock.patch('flume.logger.warn')
-    def test_http_read_with_no_time_field_produces_warning(self, mock_warn):
+    def test_http_read_with_no_time_field_produces_warning(self, mock_warn, mock_request):
+        syslog = open('examples/grok/syslog')
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'iter_content': lambda chunk_size: syslog.readlines(),
+            'headers': []
+        })
+
         results = []
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/syslog',
+                 url='http://localhost:8080/syslog',
                  format='grok',
                  pattern='%{SYSLOGLINE}')
             | memory(results)
@@ -163,24 +44,47 @@ class HttpTest(unittest.TestCase):
             mock.call('point missing time field "time"') for _ in range(0, 274)
         ])
 
-    def test_http_read_with_bad_http_response(self):
-        results = []
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_with_bad_http_response(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 500,
+            'text': 'Internal Server Error',
+            'headers': []
+        })
+
         try:
             (
                 read('http',
-                     url=_BASEURL + '/fail?status=500&message=Internal Server Error')
+                     url='http://localhost:8080/fail')
             ).execute()
 
             raise Exception('previous code should have failed')
         except FlumineException as exception:
             expect(exception.message).to.contain('Internal Server Error')
 
-    def test_http_read_with_failure(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/fail', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_with_failure(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {
+                'content-type': 'application/json'
+            },
+            'json': lambda: json.loads('garbage')
+        })
+
         results = []
         try:
             (
                 read('http',
-                     url=_BASEURL + '/garbage')
+                     url='http://localhost:8080/garbage')
                 | memory(results)
             ).execute()
 
@@ -189,20 +93,50 @@ class HttpTest(unittest.TestCase):
             expect(exception.message).to.eq('No JSON object could be decoded')
             expect(results).to.eq([])
 
-    def test_empty_http_read(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/garbage', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_empty_http_read(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {
+                'content-type': 'application/json'
+            },
+            'json': lambda: json.loads('[]')
+        })
+
         results = []
         (
             read('http',
-                 url=_BASEURL + '/empty')
+                 url='http://localhost:8080/empty')
             | memory(results)
         ).execute()
         expect(results).to.eq([])
 
-    def test_http_read_a_few_historical_points(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/empty', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_a_few_historical_points(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {
+                'content-type': 'application/json'
+            },
+            'json': lambda: [
+                {'time': '2010-01-01T00:00:00.000Z'},
+                {'time': '2010-01-01T00:00:01.000Z'},
+                {'time': '2010-01-01T00:00:02.000Z'}
+            ]
+        })
+
         results = []
         (
             read('http',
-                 url=_BASEURL + '/points?count=3&start=2010-01-01')
+                 url='http://localhost:8080/points?count=3&start=2010-01-01')
             | memory(results)
         ).execute()
 
@@ -212,64 +146,135 @@ class HttpTest(unittest.TestCase):
             {'time': '2010-01-01T00:00:02.000Z'}
         ])
 
-    def test_http_read_a_few_live_points(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/points?count=3&start=2010-01-01', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_a_few_live_points(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {
+                'content-type': 'application/json'
+            },
+            'json': lambda: [
+                {'time': moment.now()},
+                {'time': moment.now()},
+                {'time': moment.now()},
+                {'time': moment.now()},
+                {'time': moment.now()}
+            ]
+        })
+
         results = []
         (
             read('http',
-                 url=_BASEURL + '/points?count=5')
+                 url='http://localhost:8080/points?count=5')
             | memory(results)
         ).execute()
 
         expect(results).to.have.length(5)
 
-    def test_http_write_with_bad_http_response(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/points?count=5', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_write_with_bad_http_response(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 500,
+            'text': 'Internal Server Error',
+        })
+
         results = []
         try:
             (
                 emit(limit=1, start='2016-01-01')
-                | write('http',
-                        url=_BASEURL + '/fail?status=500&message=Internal Server Error')
+                | write('http', url='http://localhost:8080/fail')
             ).execute()
 
             raise Exception('previous code should have failed')
         except FlumineException as exception:
             expect(exception.message).to.contain('Internal Server Error')
 
-    def test_http_write_a_point_and_read_it_back(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET',
+                      'http://localhost:8080/fail',
+                      headers=None,
+                      json=[{'time': '2016-01-01T00:00:00.000Z'}])
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_write_a_point_and_read_it_back(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {}
+        })
+
         results = []
         (
             emit(limit=1, start='1970-01-01')
             | put(foo='bar')
             | write('http',
                     method='PUT',
-                    url=_BASEURL + '/store?key=test1')
+                    url='http://localhost:8080/store?key=test1')
         ).execute()
+
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {},
+            'json': lambda: [{'time': '1970-01-01T00:00:00.000Z', 'foo': 'bar'}]
+        })
 
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/store?key=test1')
+                 url='http://localhost:8080/store?key=test1')
             | keep('foo')
             | memory(results)
         ).execute()
 
         expect(results).to.eq([{'foo': 'bar'}])
 
-    def test_http_write_a_single_payload_and_read_them_back(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test1',
+                      headers=None,
+                      json=[{'time': '1970-01-01T00:00:00.000Z', 'foo': 'bar'}]),
+            mock.call('GET', 'http://localhost:8080/store?key=test1', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_write_a_single_payload_and_read_them_back(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {}
+        })
+
         results = []
         (
             emit(limit=3, start='1970-01-01')
             | put(count=count())
             | write('http',
                     method='PUT',
-                    url=_BASEURL + '/store?key=test2',
+                    url='http://localhost:8080/store?key=test2',
                     batch=3)
         ).execute()
+
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {},
+            'json': lambda: [
+                {'time': '1970-01-01T00:00:00.000Z', 'count': 1},
+                {'time': '1970-01-01T00:00:01.000Z', 'count': 2},
+                {'time': '1970-01-01T00:00:02.000Z', 'count': 3}
+            ]
+        })
 
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/store?key=test2')
+                 url='http://localhost:8080/store?key=test2')
             | keep('count')
             | memory(results)
         ).execute()
@@ -282,21 +287,47 @@ class HttpTest(unittest.TestCase):
             {'count': 3}
         ])
 
-    def test_http_write_multiple_payloads_and_read_them_back(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json=[
+                          {'time': '1970-01-01T00:00:00.000Z', 'count': 1},
+                          {'time': '1970-01-01T00:00:01.000Z', 'count': 2},
+                          {'time': '1970-01-01T00:00:02.000Z', 'count': 3}
+                      ]),
+            mock.call('GET', 'http://localhost:8080/store?key=test2', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_write_multiple_payloads_and_read_them_back(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {}
+        })
+
         results = []
         (
             emit(limit=3, start='1970-01-01')
             | put(count=count())
             | write('http',
                     method='PUT',
-                    url=_BASEURL + '/store?key=test2',
+                    url='http://localhost:8080/store?key=test2',
                     batch=1)
         ).execute()
+
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {},
+            'json': lambda: [
+                {'time': '1970-01-01T00:00:00.000Z', 'count': 3}
+            ]
+        })
 
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/store?key=test2')
+                 url='http://localhost:8080/store?key=test2')
             | keep('count')
             | memory(results)
         ).execute()
@@ -307,12 +338,100 @@ class HttpTest(unittest.TestCase):
             {'count': 3}
         ])
 
-    def test_http_read_can_follow_link_header(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json=[{'time': '1970-01-01T00:00:00.000Z', 'count': 1}]),
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json=[{'time': '1970-01-01T00:00:01.000Z', 'count': 2}]),
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json=[{'time': '1970-01-01T00:00:02.000Z', 'count': 3}]),
+            mock.call('GET', 'http://localhost:8080/store?key=test2', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_write_single_points(self, mock_request):
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'headers': {}
+        })
+
+        (
+            emit(limit=3, start='1970-01-01')
+            | put(count=count())
+            | write('http',
+                    method='PUT',
+                    url='http://localhost:8080/store?key=test2',
+                    array=False)
+        ).execute()
+
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json={'time': '1970-01-01T00:00:00.000Z', 'count': 1}),
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json={'time': '1970-01-01T00:00:01.000Z', 'count': 2}),
+            mock.call('PUT',
+                      'http://localhost:8080/store?key=test2',
+                      headers=None,
+                      json={'time': '1970-01-01T00:00:02.000Z', 'count': 3}),
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_can_follow_link_header(self, mock_request):
+        points = [
+            {'time': '2016-01-01T00:00:00.000Z'},
+            {'time': '2016-01-01T00:00:01.000Z'}
+        ]
+        mock_request.side_effect = [
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'headers': {
+                    'link': '<http://localhost:8080/?count=2&page=2>; rel="next"'
+                },
+                'links': {
+                    'next': {
+                        'url': 'http://localhost:8080/points?count=2&page=2'
+                    }
+                },
+                'json': lambda: points
+            }),
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'headers': {
+                    'link': '<http://localhost:8080/?count=2&page=1>; rel="next"'
+                },
+                'links': {
+                    'next': {
+                        'url': 'http://localhost:8080/points?count=2&page=1'
+                    }
+                },
+                'json': lambda: points
+            }),
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'links': {},
+                'headers': {},
+                'json': lambda: points
+            }),
+        ]
+
         results = []
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/points?count=2&page=3')
+                 url='http://localhost:8080/points?count=2&page=3')
             | reduce(count=count())
             | keep('count')
             | memory(results)
@@ -320,12 +439,59 @@ class HttpTest(unittest.TestCase):
 
         expect(results).to.eq([{'count': 6}])
 
-    def test_http_read_can_not_follow_link_header(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/points?count=2&page=3', headers=None),
+            mock.call('GET', 'http://localhost:8080/points?count=2&page=2', headers=None),
+            mock.call('GET', 'http://localhost:8080/points?count=2&page=1', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    def test_http_read_can_not_follow_link_header(self, mock_request):
+        points = [
+            {'time': '2016-01-01T00:00:00.000Z'},
+            {'time': '2016-01-01T00:00:01.000Z'}
+        ]
+        mock_request.side_effect = [
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'headers': {
+                    'link': '<http://localhost:8080/?page=2&count=2>; rel="next"'
+                },
+                'links': {
+                    'next': {
+                        'url': 'http://localhost:8080/points?page=2&count=2'
+                    }
+                },
+                'json': lambda: points
+            }),
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'headers': {
+                    'link': '<http://localhost:8080/?page=1&count=2>; rel="next"'
+                },
+                'links': {
+                    'next': {
+                        'url': 'http://localhost:8080/points?page=1&count=2'
+                    }
+                },
+                'json': lambda: points
+            }),
+            dici(**{
+                'status_code': 200,
+                'text': 'OK',
+                'links': {},
+                'headers': {},
+                'json': lambda: points
+            }),
+        ]
+
         results = []
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/points?count=2&page=3',
+                 url='http://localhost:8080/points?count=2&page=3',
                  follow_link=False)
             | reduce(count=count())
             | keep('count')
@@ -334,18 +500,37 @@ class HttpTest(unittest.TestCase):
 
         expect(results).to.eq([{'count': 2}])
 
-    def test_http_read_can_handle_grok_format_corectly(self):
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/points?count=2&page=3', headers=None)
+        ])
+
+    @mock.patch('requests.request')
+    @mock.patch('flume.logger.warn')
+    def test_http_read_can_handle_grok_format_corectly(self, mock_warn, mock_request):
+        syslog = open('examples/grok/syslog')
+        mock_request.return_value = dici(**{
+            'status_code': 200,
+            'iter_content': lambda chunk_size: syslog.readlines(),
+            'headers': []
+        })
+
         results = []
         (
             read('http',
                  method='GET',
-                 url=_BASEURL + '/syslog',
+                 url='http://localhost:8080/syslog',
                  format='grok',
-                 pattern='%{SYSLOGLINE}',
-                 time='timestamp')
+                 pattern='%{SYSLOGLINE}')
             | reduce(count=count())
-            | keep ('count')
+            | keep('count')
             | memory(results)
         ).execute()
 
         expect(results).to.eq([{'count': 274}])
+        expect(mock_warn.call_args_list).to.eq([
+            mock.call('point missing time field "time"') for _ in range(0, 274)
+        ])
+
+        expect(mock_request.call_args_list).to.eq([
+            mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
+        ])
