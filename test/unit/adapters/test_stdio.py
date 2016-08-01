@@ -6,6 +6,8 @@ import json
 import sys
 import unittest
 
+import mock
+
 from StringIO import StringIO
 from robber import expect
 
@@ -59,8 +61,9 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:01:00.000Z", "foo": 2},
             {"time": "2016-01-01T00:02:00.000Z", "foo": 3}
         ])
-
-    def test_stdio_can_read_a_single_timeless_point_(self):
+    
+    @mock.patch('flume.logger.warn')
+    def test_stdio_can_read_a_single_timeless_point_(self, mock_warn):
         stdio.stdin = StringIO('{"foo": "bar"}')
         results = []
 
@@ -71,8 +74,10 @@ class StdioTest(unittest.TestCase):
         expect(results).to.eq([
             {"foo": "bar"}
         ])
+        expect(mock_warn.call_args).to.eq(mock.call('point missing time field "time"'))
 
-    def test_stdio_can_read_multiple_timeless_points(self):
+    @mock.patch('flume.logger.warn')
+    def test_stdio_can_read_multiple_timeless_points(self, mock_warn):
         stdio.stdin = StringIO('{"foo": 1}\n{"foo": 2}\n{"foo": 3}\n')
         results = []
 
@@ -84,6 +89,11 @@ class StdioTest(unittest.TestCase):
             {"foo": 1},
             {"foo": 2},
             {"foo": 3}
+        ])
+        expect(mock_warn.call_args_list).to.eq([
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"')
         ])
 
     def test_stdio_can_read_multiple_points_with_custom_timefield(self):
@@ -157,7 +167,8 @@ class StdioTest(unittest.TestCase):
             'foo': 'bar'
         })
 
-    def test_stdio_can_write_a_multiple_timeless_points(self):
+    @mock.patch('flume.logger.warn')
+    def test_stdio_can_write_a_multiple_timeless_points(self, mock_warn):
         stdout = StringIO('')
         stdio.stdout = stdout
         (
@@ -179,4 +190,11 @@ class StdioTest(unittest.TestCase):
             {'count': 3},
             {'count': 4},
             {'count': 5}
+        ])
+        expect(mock_warn.call_args_list).to.eq([
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"'),
+            mock.call('point missing time field "time"')
         ])

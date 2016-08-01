@@ -24,36 +24,21 @@ class stdio(adapter):
     stdin = sys.stdin
 
     def __init__(self,
-                 time='time',
                  format='jsonl',
                  file=None,
                  **kwargs):
-        self.time = time
         self.streamer = streamers.get_streamer(format, **kwargs)
         self.file = file
 
-    def __read(self, stream):
-        for point in self.streamer.read(stream):
-            if self.time in point.keys():
-                point['time'] = moment.date(point[self.time])
-
-                if self.time != 'time':
-                    del point[self.time]
-
-                yield [Point(**point)]
-
-            else:
-                yield [Point(**point)]
-
     def read(self):
         if self.file is None:
-            for point in self.__read(stdio.stdin):
-                yield point
+            for point in self.streamer.read(stdio.stdin):
+                yield [Point(**point)]
 
         else:
             with open(self.file, 'r') as stream:
-                for point in self.__read(stream):
-                    yield point
+                for point in self.streamer.read(stream):
+                    yield [Point(**point)]
 
     def write(self, points):
         if self.file is None:

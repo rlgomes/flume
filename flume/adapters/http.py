@@ -48,7 +48,6 @@ class http(adapter):
                  url=None,
                  method='GET',
                  headers=None,
-                 time='time',
                  filter=None,
                  follow_link=True,
                  format=None,
@@ -59,7 +58,6 @@ class http(adapter):
         self.url = url
         self.method = method
         self.headers = headers
-        self.time = time
         self.filter = filter
         self.follow_link = follow_link
         self.cache = cache
@@ -108,13 +106,6 @@ class http(adapter):
             for point in data:
                 # convert to a flume Point
                 point = Point(**point)
-
-                if self.time in point:
-                    point.time = moment.date(point[self.time])
-
-                else:
-                    logger.warn('point missing time field "%s"' % self.time)
-
                 points.append(point)
 
             yield points
