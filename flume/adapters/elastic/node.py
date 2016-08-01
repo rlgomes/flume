@@ -25,14 +25,12 @@ class elastic(adapter):
                  type='metric',
                  host='localhost',
                  port=9200,
-                 time='time',
                  filter=None,
                  batch=1024):
         self.index = index
         self.type = type
         self.host = host
         self.port = port
-        self.time = time
         self.filter = filter
         self.batch = batch
         self.clients = {}
@@ -63,7 +61,6 @@ class elastic(adapter):
                                    query={'query': query, 'sort': ['time']},
                                    preserve_order=True):
             point = Point(**result['_source'])
-            point.time = moment.date(point[self.time])
             points.append(point)
 
             if len(points) > self.batch:
