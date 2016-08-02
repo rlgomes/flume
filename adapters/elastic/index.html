@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Rodney Gomes <rodneygomes@gmail.com>">
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>elastic - Flume</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">Flume</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../../overview/">Overview</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../installation/">Installation</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../first_steps/">First Steps</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Adapters</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Streamers</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../streamers/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../streamers/csv/">csv</a>
+</li>
+
+        
+            
+<li >
+    <a href="../streamers/grok/">grok</a>
+</li>
+
+        
+            
+<li >
+    <a href="../streamers/json/">json</a>
+</li>
+
+        
+            
+<li >
+    <a href="../streamers/jsonl/">jsonl</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../">overview</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">elastic</a>
+</li>
+
+        
+            
+<li >
+    <a href="../http/">http</a>
+</li>
+
+        
+            
+<li >
+    <a href="../stdio/">stdio</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="../../moments/">Moments</a>
+</li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Procs</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../procs/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/diff/">diff</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/filter/">filter</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/head/">head</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/intersect/">intersect</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/keep/">keep</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/put/">put</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/reduce/">reduce</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Reducers</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../procs/reduce/reducers/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/reduce/reducers/count/">count</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/reduce/reducers/iterate/">iterate</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/reduce/reducers/maximum/">maximum</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/reduce/reducers/minimum/">minimum</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../procs/remove/">remove</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/sort/">sort</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/tail/">tail</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/union/">union</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sinks</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Views</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../sinks/views/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/views/gnuplot/">gnuplot</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/views/pygal/">pygal</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../sinks/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/barchart/">barchart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/linechart/">linechart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/memory/">memory</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/timechart/">timechart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sinks/write/">write</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sources</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../sources/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sources/emit/">emit</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../sources/read/">read</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#elastic-adapter">elastic adapter</a></li>
+        
+            <li><a href="#read">read</a></li>
+        
+            <li><a href="#write">write</a></li>
+        
+            <li><a href="#writing-a-few-points-to-elastic">writing a few points to elastic</a></li>
+        
+    
+        <li class="main "><a href="#reading-points-from-elastic">reading points from elastic</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="elastic-adapter">elastic adapter</h1>
+<p>The elastic adapter can be used to read and write data from a running
+<a href="https://www.elastic.co/">elasticsearch</a> instance. The currently supported versions of elasticsearch that we have integration tests to verify against is 2.3.3 . We'll be adding verification of a view other versions shortly and
+if you want to see support for a specific version please let us know on our
+github <a href="https://github.com/rlgomes/flume/issues">issues</a> tracking system.</p>
+<h2 id="read">read</h2>
+<p>Reading from the elastic adapter is done using the <a href="../../sources/read">read</a> source
+with the following options available at this time:</p>
+<pre><code class="python">read('elastic',
+     index='_all',
+     type='metric',
+     host='localhost',
+     port=9200,
+     time='time',
+     filter=None,
+     batch=1024) | ...
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>index</td>
+<td>elasticsearch index to read from</td>
+<td>No, default: <code>_all</code></td>
+</tr>
+<tr>
+<td>type</td>
+<td>elasticsearch document type to read</td>
+<td>No, default: <code>metric</code></td>
+</tr>
+<tr>
+<td>host</td>
+<td>hostname of the elasticsearch instance</td>
+<td>No, default: <code>localhost</code></td>
+</tr>
+<tr>
+<td>port</td>
+<td>port of the elasticsearch instance</td>
+<td>No, default: <code>9200</code></td>
+</tr>
+<tr>
+<td>time</td>
+<td>field name that contains valid timestamp</td>
+<td>No, default: <code>time</code></td>
+</tr>
+<tr>
+<td>filter</td>
+<td>filter expression to run against the es data (*)</td>
+<td>No, default:  <code>None</code></td>
+</tr>
+<tr>
+<td>batch</td>
+<td>the read batch size when reading from es</td>
+<td>No, default: <code>1024</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>(*) filter expressions are further explained <a href="../../filter_expressions">here</a></li>
+</ul>
+<h2 id="write">write</h2>
+<p>Writing to the elastic adapter is done using the <a href="../../sinks/write">write</a> sink
+with the following options available at this time:</p>
+<pre><code class="python">... | write('elastic',
+            index='_all',
+            type='metric',
+            host='localhost',
+            port=9200,
+            time='time',
+            filter=None,
+            batch=1024)
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>index</td>
+<td>elasticsearch index to write to</td>
+<td>No, default: <code>_all</code></td>
+</tr>
+<tr>
+<td>type</td>
+<td>elasticsearch document type to write</td>
+<td>No, default: <code>metric</code></td>
+</tr>
+<tr>
+<td>host</td>
+<td>hostname of the elasticsearch instance</td>
+<td>No, default: <code>localhost</code></td>
+</tr>
+<tr>
+<td>port</td>
+<td>port of the elasticsearch instance</td>
+<td>No, default: <code>9200</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="writing-a-few-points-to-elastic">writing a few points to elastic</h2>
+<pre><code class="python">from flume import emit, write
+
+(
+    emit(limit=10, start='2013-01-01', every='day')
+    | write('elastic', index='test-index')
+).execute()
+</code></pre>
+
+<p>To test out the above using a quick elasticsearch instance spun up using docker
+just use the following quick command line:</p>
+<pre><code class="bash">docker run -p 9200:9200 elasticsearch:2.3.3
+</code></pre>
+
+<p>Then you can execute the program, but there will be no output and you can easily
+verify your data was stored to that local instance by hitting:</p>
+<pre><code>http://localhost:9200/test-index/_search
+</code></pre>
+<p>Where the JSON response should have 10 hits and you should be able to see the
+<code>_source</code> field contains the timestamps from <code>2013-01-01T00:00:00.000Z</code> to 
+<code>2013-01-101T00:00:00.000Z</code> (they're not sorted at this point).</p>
+<h1 id="reading-points-from-elastic">reading points from elastic</h1>
+<pre><code class="python">from flume import read, write
+
+(
+    read('elastic', index='test-index')
+    | write('stdio')
+).execute()
+</code></pre>
+
+<p>Which produces the following output:</p>
+<pre><code class="bash">&gt; python test.py 
+{&quot;time&quot;: &quot;2013-01-01T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-02T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-03T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-04T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-05T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-06T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-07T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-08T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-09T00:00:00.000Z&quot;}
+{&quot;time&quot;: &quot;2013-01-10T00:00:00.000Z&quot;}
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

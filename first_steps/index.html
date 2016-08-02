@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Rodney Gomes <rodneygomes@gmail.com>">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>First Steps - Flume</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Flume</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../overview/">Overview</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../installation/">Installation</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">First Steps</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Adapters</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Streamers</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../adapters/streamers/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/streamers/csv/">csv</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/streamers/grok/">grok</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/streamers/json/">json</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/streamers/jsonl/">jsonl</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../adapters/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/elastic/">elastic</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/http/">http</a>
+</li>
+
+        
+            
+<li >
+    <a href="../adapters/stdio/">stdio</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="../moments/">Moments</a>
+</li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Procs</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../procs/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/diff/">diff</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/filter/">filter</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/head/">head</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/intersect/">intersect</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/keep/">keep</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/put/">put</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/reduce/">reduce</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Reducers</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../procs/reduce/reducers/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/reduce/reducers/count/">count</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/reduce/reducers/iterate/">iterate</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/reduce/reducers/maximum/">maximum</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/reduce/reducers/minimum/">minimum</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../procs/remove/">remove</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/sort/">sort</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/tail/">tail</a>
+</li>
+
+        
+            
+<li >
+    <a href="../procs/union/">union</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sinks</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Views</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../sinks/views/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/views/gnuplot/">gnuplot</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/views/pygal/">pygal</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../sinks/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/barchart/">barchart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/linechart/">linechart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/memory/">memory</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/timechart/">timechart</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sinks/write/">write</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sources</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../sources/">overview</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sources/emit/">emit</a>
+</li>
+
+        
+            
+<li >
+    <a href="../sources/read/">read</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#first-steps">first steps</a></li>
+        
+            <li><a href="#your-first-flume-program">your first flume program</a></li>
+        
+            <li><a href="#reading-from-a-log-file">reading from a log file</a></li>
+        
+            <li><a href="#reading-from-an-http-request">reading from an HTTP request</a></li>
+        
+            <li><a href="#running-flume-in-python">running flume in Python</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="first-steps">first steps</h1>
+<p>For most of the programs below we'll use the <strong>flume</strong> CLI since it allows us
+to quickly write and iterate on a program while immediately seeing the result
+of executing that program.</p>
+<h2 id="your-first-flume-program">your first flume program</h2>
+<p>Lets start with writing a program where we generate some points using a special
+source called <a href="procs/emit.md">emit</a> which can emit points to simulate real
+world data:</p>
+<pre><code class="bash">flume &quot;emit(limit=10) | write('stdio')&quot;
+</code></pre>
+
+<p>The above emits 10 points to the sink <a href="sources/write.md">write</a> and pushing
+those writes through the <a href="../adapters/stdio/">stdio</a> adapter. The output will
+look like so (each point is emitted in realtime):</p>
+<pre><code class="json">{&quot;time&quot;: &quot;2016-07-17T19:55:40.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:41.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:42.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:43.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:44.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:45.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:46.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:47.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:48.853Z&quot;}
+{&quot;time&quot;: &quot;2016-07-17T19:55:49.853Z&quot;}
+</code></pre>
+
+<p>Those points <a href="procs/emit.md">emit</a> in realtime one by one since the default
+value for the argument <code>start</code> is set to <em>now</em>, you can set <code>start</code> to
+something such as <code>2013-01-01</code> and it would <a href="procs/emit.md">emit</a> those
+points immediately.</p>
+<h2 id="reading-from-a-log-file">reading from a log file</h2>
+<p>Now let's do something more interesting and read actual data from a real source
+such as the syslog file in <a href="https://raw.githubusercontent.com/rlgomes/flume/master/examples/grok/syslog">examples/grok/syslog</a>
+(download it from the source and change the path in the <code>file</code> argument below,
+if you don't happen to not be working on a copy of the source of <strong>flume</strong>):</p>
+<pre><code class="bash">flume &quot;read('stdio', format='grok', pattern='%{SYSLOGLINE}', file='examples/grok/syslog') | write('stdio')&quot;
+</code></pre>
+
+<p>The above uses quite a few things to achieve the desired result of parsing the
+syslog file into data points in the <strong>flume</strong> stream. So there's the <strong>read</strong>
+processor which uses the <a href="../adapters/stdio/">stdio</a> adapter to parse the file
+<code>examples/grok/syslog</code> using the <a href="https://pypi.python.org/pypi/grokpy">grok</a>
+stream parser. We don't have actual a <code>time</code> field in our data so we should tell
+the <code>read</code> processor which field in our data is a time field, like so:</p>
+<pre><code class="bash">flume &quot;read('stdio', format='grok', pattern='%{SYSLOGLINE}', file='examples/grok/syslog', time='timestamp') | write('stdio')&quot;
+</code></pre>
+
+<p>We could now do something interesting to our data such as calculating how many
+log lines we have per hour in this file. So we have the <strong>reduce</strong> processor
+which is used to calculate reductions on our stream. Nothing like an example
+to better show case how <strong>reduce</strong> is used:</p>
+<pre><code class="bash">flume &quot;read('stdio', format='grok', pattern='%{SYSLOGLINE}', file='examples/grok/syslog', time='timestamp') | reduce(count=count(), every='1h') | write('stdio')&quot;
+</code></pre>
+
+<p>Our command line is getting a little difficult to write on a single command
+line so we could use some feature to short hand certain parts of our pipeline.
+This is all python code so really there already exists such shorthands by simply
+defining new python functions that wrap existing <strong>flume</strong> procesors like so:</p>
+<pre><code class="python">def syslog(filename):
+    return read('stdio', format='grok', pattern='%{SYSLOGLINE}', file=filename, time='timestamp')
+</code></pre>
+
+<p>And to use your new syslog helper/alias you simply need to create a local
+file with the name <code>.flumerc.py</code> which can contain utilities you can use
+when running the <strong>flume</strong> command line tool. The <code>.flumerc.py</code> file should look
+like so:</p>
+<pre><code class="python">from flume import *
+
+def syslog(file):
+    return read('stdio', format='grok', pattern='%{SYSLOGLINE}', file=file, time='timestamp')
+</code></pre>
+
+<p>The <code>.flumerc.py</code> file can be used to define anything you'd like to expose
+globally for your <strong>flume</strong> command line programs. With the above <code>.flumerc.py</code>
+file in your current working directory or globally accessible in your home (~/)
+directory you can now run the earlier program like so:</p>
+<pre><code class="bash">&gt; flume &quot;syslog('examples/grok/syslog') | reduce(count=count(), every='1h') | write('stdio')&quot;
+{&quot;count&quot;: 27, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 1, &quot;time&quot;: &quot;2016-07-17T14:59:44.000Z&quot;}
+{&quot;count&quot;: 110, &quot;time&quot;: &quot;2016-07-17T15:59:44.000Z&quot;}
+{&quot;count&quot;: 8, &quot;time&quot;: &quot;2016-07-17T16:59:44.000Z&quot;}
+{&quot;count&quot;: 118, &quot;time&quot;: &quot;2016-07-17T17:59:44.000Z&quot;}
+{&quot;count&quot;: 10, &quot;time&quot;: &quot;2016-07-17T18:59:44.000Z&quot;}
+</code></pre>
+
+<p>That is a lot easier to read and write on the command line and also highlights
+the main reason I wanted <strong>flume</strong> to be just an extension of the <strong>python</strong>
+runtime where you can simply use existing familiar constructs to build parts
+of the <strong>flume</strong> pipeline.</p>
+<p>Now what if we actually wanted to get the count of lines generated by each
+program writing to the syslog file. This can be easily achieved using the
+argument <code>by</code> to the <strong>reduce</strong> processor like so:</p>
+<pre><code class="bash">&gt; flume &quot;syslog('examples/grok/syslog') | reduce(count=count(), by=['program']) | write('stdio')&quot;
+{&quot;count&quot;: 178, &quot;program&quot;: &quot;kernel&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 21, &quot;program&quot;: &quot;laptop-mode&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 18, &quot;program&quot;: &quot;wpa_supplicant&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 14, &quot;program&quot;: &quot;anacron&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 19, &quot;program&quot;: &quot;CRON&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 3, &quot;program&quot;: &quot;cinnamon-screensaver-dialog&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 18, &quot;program&quot;: &quot;NetworkManager&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+{&quot;count&quot;: 3, &quot;program&quot;: &quot;console-kit-daemon&quot;, &quot;time&quot;: &quot;2016-07-17T13:59:44.000Z&quot;}
+</code></pre>
+
+<p>Making the above easier to read we could sort by <code>count</code> using the <strong>sort</strong>
+processor and get something like so:</p>
+<pre><code class="bash">&gt; flume &quot;syslog('examples/grok/syslog') | reduce(count=count(), by=['program']) | sort('count') | write('stdio')&quot;
+{&quot;count&quot;: 3, &quot;program&quot;: &quot;cinnamon-screensaver-dialog&quot;}
+{&quot;count&quot;: 3, &quot;program&quot;: &quot;console-kit-daemon&quot;}
+{&quot;count&quot;: 14, &quot;program&quot;: &quot;anacron&quot;}
+{&quot;count&quot;: 18, &quot;program&quot;: &quot;wpa_supplicant&quot;}
+{&quot;count&quot;: 18, &quot;program&quot;: &quot;NetworkManager&quot;}
+{&quot;count&quot;: 19, &quot;program&quot;: &quot;CRON&quot;}
+{&quot;count&quot;: 21, &quot;program&quot;: &quot;laptop-mode&quot;}
+{&quot;count&quot;: 178, &quot;program&quot;: &quot;kernel&quot;}
+</code></pre>
+
+<p>Which makes it easy to see that the <code>kernel</code> is responsible for the majority
+of log lines in our syslog file. For those wondering why the <code>time</code> field just
+disappeared from our output it's because we can't continue to do other things
+downstream with points if they're not in chronological order.</p>
+<p>At this point I'd bet some of you are saying well I can totally do all of the
+above with my <strong>GNU</strong> command line tools. Of course you can and it would
+probably look something like so:</p>
+<pre><code class="bash">&gt; cat examples/grok/syslog | awk '{print $5}' | sed 's/\[[0-9]*\]//g' | sort | uniq -c | sort -n
+      3 cinnamon-screensaver-dialog:
+      3 console-kit-daemon:
+     14 anacron:
+     18 NetworkManager:
+     18 wpa_supplicant:
+     19 CRON:
+     21 laptop-mode:
+    178 kernel:
+</code></pre>
+
+<p>It is actually shorter than using <strong>flume</strong> but I doubt you'll find many people
+who can read that in a single pass and understand what it does.</p>
+<h2 id="reading-from-an-http-request">reading from an HTTP request</h2>
+<p>We could have presented this earlier since with the <a href="../adapters/http/">http</a> you
+can read the syslog file mentioned in the previous section directly from github
+like so:</p>
+<pre><code class="bash">flume &quot;read('http', url='https://raw.githubusercontent.com/rlgomes/flume/master/examples/grok/syslog', format='grok', pattern='%{SYSLOGLINE}', time='timestamp') | write('stdio')&quot;
+</code></pre>
+
+<p>The above is getting a bit out of hand in terms of the length of the <strong>flume</strong>
+program so one could shorten it by creating a <code>.flumerc.py</code> helper like so:</p>
+<pre><code class="python">def http_syslog(url):
+    return read('http', url=url, format='grok', pattern='%{SYSLOGLINE}', time='timestamp')
+</code></pre>
+
+<p>Which allows us to shorten the previous command line to simply:</p>
+<pre><code class="bash">flume &quot;http_syslog('https://raw.githubusercontent.com/rlgomes/flume/master/examples/grok/syslog') | write('stdio')&quot;
+</code></pre>
+
+<p>This example is to really highlight how simple the transition is from reading
+data from a local log file to reading an HTTP end point in order to get real
+data into your pipeline.</p>
+<h2 id="running-flume-in-python">running flume in Python</h2>
+<p>The previous examples focused on showing off how to use <strong>flume</strong> from the
+command line but its ultimately intended to be used from your own Python source
+code and so lets dive into how that works. <strong>Flume</strong> itself is just a python
+module that exports the various <code>sources</code>,<code>sinks</code> and <code>procs</code> so you can use
+them when building a <strong>flume</strong> pipeline. To stat you must import the elements
+you want from flume like so:</p>
+<pre><code class="python">from flume import emit, count, put, write
+</code></pre>
+
+<p>Then you can construct your flume pipeline as you did on the command line:</p>
+<pre><code class="python">from flume import emit, count, put, write
+
+pipeline = emit(limit=5) | put(count=count()) | write('stdio')
+</code></pre>
+
+<p>Now if you execute the above <strong>Python</strong> program you won't get any output and
+that is because all you did above was construct a <strong>flume</strong> pipeline and it
+won't execute till you tell it to do so using the <code>execute()</code> method, like so:</p>
+<pre><code class="python">from flume import emit, count, put, write
+
+pipeline = emit(limit=5) | put(count=count()) | write('stdio')
+pipeline.execute()
+</code></pre>
+
+<p>Now executing the above will produce in realtime, the following output:</p>
+<pre><code class="bash">&gt; python test.py 
+{&quot;count&quot;: 1, &quot;time&quot;: &quot;2016-07-30T10:40:50.068Z&quot;}
+{&quot;count&quot;: 2, &quot;time&quot;: &quot;2016-07-30T10:40:51.068Z&quot;}
+{&quot;count&quot;: 3, &quot;time&quot;: &quot;2016-07-30T10:40:52.068Z&quot;}
+{&quot;count&quot;: 4, &quot;time&quot;: &quot;2016-07-30T10:40:53.068Z&quot;}
+{&quot;count&quot;: 5, &quot;time&quot;: &quot;2016-07-30T10:40:54.068Z&quot;}
+</code></pre>
+
+<p>There we have our first <strong>flume</strong> pipeline in <strong>Python</strong> which can be rerun by
+simple calling the <code>execute()</code> method on the pipeline we constructed. The main
+reason for this type of construct is that it allows you to control the order
+of execution of multiple pipelines or even calculate a set of values in one
+pipeline before you execute another pipeline that depends on the previous one.</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
