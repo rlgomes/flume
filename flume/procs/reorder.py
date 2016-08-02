@@ -7,11 +7,6 @@ from flume import logger, moment, node
 
 
 class reorder(node):
-    """
-    # reorder proc
-
-    XXX: fill me in
-    """
 
     name = 'reorder'
 

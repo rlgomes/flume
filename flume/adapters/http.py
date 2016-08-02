@@ -48,7 +48,6 @@ class http(adapter):
                  url=None,
                  method='GET',
                  headers=None,
-                 filter=None,
                  follow_link=True,
                  format=None,
                  cache=None,
@@ -58,7 +57,6 @@ class http(adapter):
         self.url = url
         self.method = method
         self.headers = headers
-        self.filter = filter
         self.follow_link = follow_link
         self.cache = cache
         self.array = array

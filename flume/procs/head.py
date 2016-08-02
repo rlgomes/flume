@@ -5,15 +5,6 @@ from flume import node
 
 
 class head(node):
-    """
-    # head
-
-    The head processor is used to only keep the first N elements and throw
-    away all other remaining points
-
-    usage: ... | head(N) | ...
-
-    """
 
     name = 'head'
 

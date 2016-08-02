@@ -19,12 +19,10 @@ class Gnuplot(base):
                  title='',
                  width=1280,
                  height=1024,
-                 filename=None,
                  terminal='dumb'):
         self.title = title
         self.width = width
         self.height = height
-        self.filename = filename
         self.terminal = terminal
 
         if terminal == 'dumb':

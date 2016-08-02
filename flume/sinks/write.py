@@ -6,15 +6,8 @@ from flume import adapters, sink
 
 
 class write(sink):
-    """
-    # write
-
-    usage: ... | write('file', path='/tmp/mydata.json')
-
-    """
 
     name = 'write'
-    adapters = {}
 
     def __init__(self,
                  adapter,

@@ -12,7 +12,7 @@ class linechart(sink):
     name = 'linechart'
 
     def __init__(self,
-                 name,
+                 view,
                  series='name',
                  yvalue='value',
                  xvalue='time',
@@ -21,7 +21,7 @@ class linechart(sink):
         self.series = series
         self.xvalue = xvalue
         self.yvalue = yvalue
-        self.view = get_view(name, **kwargs)
+        self.view = get_view(view, **kwargs)
 
     def loop(self):
         series = {}

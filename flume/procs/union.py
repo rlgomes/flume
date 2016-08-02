@@ -7,9 +7,6 @@ from flume import node
 
 
 class union(node):
-    """
-    union processor
-    """
 
     name = 'union'
 

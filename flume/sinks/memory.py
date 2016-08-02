@@ -6,17 +6,6 @@ from flume import sink
 from flume.exceptions import FlumineException
 
 class memory(sink):
-    """
-    # memory
-
-    The memory sink can be used to store the output of a flume pipeline into
-    an array so you can use this data for some other task.
-
-    usage: ... | memory(results)
-
-    where results was initialized to an empty list: results = []
-
-    """
 
     name = 'memory'
 

@@ -7,9 +7,6 @@ from flume import node
 
 
 class intersect(node):
-    """
-    intersect processor
-    """
 
     name = 'intersect'
 

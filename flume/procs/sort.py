@@ -8,15 +8,6 @@ from flume.exceptions import FlumineException
 
 
 class sort(node):
-    """
-    # sort
-
-    The sort processor is used to sort your points by a specific field (other
-    than time). When you use `sort` the resulting points have no `time` field.
-
-    usage: ... | sort(field,...,fieldN) | ...
-
-    """
 
     name = 'sort'
 

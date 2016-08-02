@@ -5,16 +5,6 @@ from flume import node, reducer
 
 
 class put(node):
-    """
-    # put
-
-    The put processor is used to to add fields to any point that passes through
-    this node in the pipeline. The fields added can be static or the result of
-    applying a **reducer**.
-
-    usage: ... | put(field=value, ..., field=count()) | ...
-
-    """
 
     name = 'put'
 
