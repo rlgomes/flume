@@ -1,6 +1,7 @@
 build
 dist
 env
+site
 *.pyc
 flume.egg-info/
 .eggs/

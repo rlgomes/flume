@@ -13,6 +13,13 @@ the code up and start sharing it with others to see if there's any interest in
 further developing this. I'll continue to tweak and adding things as I have
 time and find something I need to accomplish with **flume**.
 
+# documentation
+
+documentation handled by [mkdocs](http://www.mkdocs.org/) and currently served
+up at:
+   
+   [https://rlgomes.github.io/flume/](https://rlgomes.github.io/flume/)
+
 # installation
 
 ## from pypi
