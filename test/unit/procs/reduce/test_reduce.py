@@ -449,3 +449,39 @@ class ReduceTest(unittest.TestCase):
             {'time': '2016-01-01T09:00:00.000Z', 'count': 1},
             {'time': '2016-01-01T10:00:00.000Z', 'count': 1}
         ])
+
+    def test_reduce_by_a_nested_field(self):
+        results = []
+        (
+            emit(points=[
+                {'time': '2016-01-01T00:00:00.000Z', 'author': {'name': 'joe'}},
+                {'time': '2016-01-01T00:01:00.000Z', 'author': {'name': 'joe'}},
+                {'time': '2016-01-01T00:02:00.000Z', 'author': {'name': 'bob'}},
+                {'time': '2016-01-01T00:03:00.000Z', 'author': {'name': 'joe'}},
+                {'time': '2016-01-01T00:03:00.000Z', 'author': {'name': 'bob'}},
+            ])
+            | reduce(count=count(), by=['author.name'])
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([
+            {'time': '2016-01-01T00:00:00.000Z', 'author': {'name': 'bob'}, 'count': 2},
+            {'time': '2016-01-01T00:00:00.000Z', 'author': {'name': 'joe'}, 'count': 3}
+        ])
+
+    def test_reduce_maximum_on_nested_field(self):
+        results = []
+        (
+            emit(points=[
+                {'time': '2016-01-01T00:00:00.000Z', 'nested': {'value': 1}},
+                {'time': '2016-01-01T00:01:00.000Z', 'nested': {'value': 5}},
+                {'time': '2016-01-01T00:02:00.000Z', 'nested': {'value': 3}},
+                {'time': '2016-01-01T00:03:00.000Z', 'nested': {'value': 2}},
+                {'time': '2016-01-01T00:03:00.000Z', 'nested': {'value': 7}},
+            ])
+            | reduce(maximum=maximum('nested.value'))
+            | remove('time')
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([
+            {'maximum': 7}
+        ])

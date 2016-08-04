@@ -21,6 +21,20 @@ class PutTest(unittest.TestCase):
             {'foo': 1}
         ])
 
+    def test_put_add_a_nested_field(self):
+        results = []
+        (
+            emit(points=[{}, {}])
+            | put(foo={
+                'value': 1
+            })
+            | memory(results)
+        ).execute()
+        expect(results).to.eq([
+            {'foo': {'value': 1}},
+            {'foo': {'value': 1}}
+        ])
+
     def test_put_multiple_fields(self):
         results = []
         (
