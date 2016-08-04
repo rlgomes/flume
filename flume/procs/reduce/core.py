@@ -41,7 +41,7 @@ class reduce(node):
             results[by_key] = init_point
 
             for by in self.by:
-                results[by_key][by] = point[by]
+                results[by_key].set(by, point[by])
 
             if by_key not in fields:
                 fields[by_key] = {}
