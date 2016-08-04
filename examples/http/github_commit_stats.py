@@ -16,8 +16,9 @@ Few things to note:
 from flume import *
 
 print('Github commit repo stats')
-owner = raw_input('Name of the github repo owner (example: juttle): ')
-repo = raw_input('Name of the github repo (example: juttle): ')
+owner = raw_input('Name of the github repo owner (default: elastic): ') or 'elastic'
+repo = raw_input('Name of the github repo (default: kibana): ') or 'kibana'
+issue = raw_input('Isssue # (default: 1610): ') or '1610'
 
 (
     read('http',
