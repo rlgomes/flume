@@ -3,12 +3,11 @@ jsonl streamer unittests
 """
 import unittest
 
-from StringIO import StringIO
-
 from robber import expect
 
 from flume.adapters.streamers import get_streamer
 from flume import Point
+from test.unit.util import StringIO
 
 
 class JSONLStreamerTest(unittest.TestCase):

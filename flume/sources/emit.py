@@ -97,7 +97,7 @@ class emit(node):
                     internal push point function
                     """
                     point = Point(time=current_time)
-                    self.push(point)
+                    self.push([point])
 
                     count += 1
                     current_time += every

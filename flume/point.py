@@ -74,4 +74,4 @@ class Point(dici):
         return result
 
     def __str__(self):
-        return json.dumps(self.json())
+        return json.dumps(self.json(), sort_keys=True)

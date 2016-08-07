@@ -85,7 +85,7 @@ class PyGal(base):
             chart = pygal.Bar(height=self.height, width=self.width)
             chart.title = self.title
 
-            chart.x_labels = [category for (category, _) in data[data.keys()[0]]]
+            chart.x_labels = [category for (category, _) in data[list(data.keys())[0]]]
 
             for series_name in data.keys():
                 series = [value for (_, value) in data[series_name]]

@@ -6,7 +6,7 @@ CairoSVG==1.0.20
 cffi==1.6.0
 click==6.6
 cssselect==0.9.1
-delta==0.4
+delta==0.4.2
 dici==0.2.1
 elasticsearch==2.3.0
 ijson==2.3

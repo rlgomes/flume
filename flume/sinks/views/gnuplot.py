@@ -55,7 +55,8 @@ class Gnuplot(base):
         self.write('set yrange [%g:%g]\n' % (min_value, max_value))
 
     def write(self, line):
-        self.process.stdin.write(line)
+        self.process.stdin.write(line.encode('utf-8'))
+        self.process.stdin.flush()
 
     def render(self, chart_type, data):
         min_value = 0
@@ -83,7 +84,7 @@ class Gnuplot(base):
 
                     else:
                         output.write('%s\t%s\n' % (colx, coly))
-        
+
         self.init_terminal(min_value, max_value)
 
         if chart_type == 'linechart' or chart_type == 'timechart':

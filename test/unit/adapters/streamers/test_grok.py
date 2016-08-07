@@ -3,7 +3,7 @@ grok streamer unittests
 """
 import unittest
 
-from StringIO import StringIO
+from test.unit.util import StringIO
 
 from robber import expect
 

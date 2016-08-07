@@ -22,7 +22,7 @@ class AdaptersTest(unittest.TestCase):
             register_adapter(TestAdapter)
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('"non-unique" adapter already registered')
+            expect(exception.message).to.contain('"non-unique" adapter already registered')
 
     def test_register_and_get_adapter_by_name(self):
         class TestAdapter(adapter):
@@ -40,7 +40,7 @@ class AdaptersTest(unittest.TestCase):
             get_adapter('non-existent', 'read')
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('"non-existent" adapter not registered')
+            expect(exception.message).to.contain('"non-existent" adapter not registered')
 
     def test_register_and_get_adapter_by_name_with_missing_operation_fails(self):
         class TestAdapter(adapter):
@@ -50,4 +50,4 @@ class AdaptersTest(unittest.TestCase):
         try:
             get_adapter('not-writable', 'write')
         except FlumineException as exception:
-            expect(exception).to.contain('"not-writable" adapter does not support write')
+            expect(exception.message).to.contain('"not-writable" adapter does not support write')

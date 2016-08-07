@@ -21,32 +21,32 @@ class HttpTest(unittest.TestCase):
     @mock.patch('requests.request')
     @mock.patch('flume.logger.warn')
     def test_http_read_with_no_time_field_produces_warning(self, mock_warn, mock_request):
-        syslog = open('examples/grok/syslog')
-        mock_request.return_value = dici(**{
-            'status_code': 200,
-            'iter_content': lambda chunk_size: syslog.readlines(),
-            'headers': []
-        })
+        with open('examples/grok/syslog') as syslog:
+            mock_request.return_value = dici(**{
+                'status_code': 200,
+                'iter_content': lambda chunk_size: syslog.readlines(),
+                'headers': []
+            })
 
-        results = []
-        (
-            read('http',
-                 method='GET',
-                 url='http://localhost:8080/syslog',
-                 format='grok',
-                 pattern='%{SYSLOGLINE}')
-            | memory(results)
-        ).execute()
+            results = []
+            (
+                read('http',
+                     method='GET',
+                     url='http://localhost:8080/syslog',
+                     format='grok',
+                     pattern='%{SYSLOGLINE}')
+                | memory(results)
+            ).execute()
 
-        expect(len(results)).to.eq(274)
-        expect(len(mock_warn.call_args_list)).to.eq(274)
-        expect(mock_warn.call_args_list).to.eq([
-            mock.call('point missing time field "time"') for _ in range(0, 274)
-        ])
+            expect(len(results)).to.eq(274)
+            expect(len(mock_warn.call_args_list)).to.eq(274)
+            expect(mock_warn.call_args_list).to.eq([
+                mock.call('point missing time field "time"') for _ in range(0, 274)
+            ])
 
-        expect(mock_request.call_args_list).to.eq([
-            mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
-        ])
+            expect(mock_request.call_args_list).to.eq([
+                mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
+            ])
 
     @mock.patch('requests.request')
     def test_http_read_with_expected_400_status(self, mock_request):
@@ -103,12 +103,16 @@ class HttpTest(unittest.TestCase):
 
     @mock.patch('requests.request')
     def test_http_read_with_failure(self, mock_request):
+        
+        def raise_json_failure():
+            raise ValueError('No JSON object could be decoded')
+
         mock_request.return_value = dici(**{
             'status_code': 200,
             'headers': {
                 'content-type': 'application/json'
             },
-            'json': lambda: json.loads('garbage')
+            'json': raise_json_failure
         })
 
         results = []
@@ -121,7 +125,7 @@ class HttpTest(unittest.TestCase):
 
             raise Exception('previous code should have failed')
         except ValueError as exception:
-            expect(exception.message).to.eq('No JSON object could be decoded')
+            expect(str(exception)).to.eq('No JSON object could be decoded')
             expect(results).to.eq([])
 
         expect(mock_request.call_args_list).to.eq([
@@ -538,30 +542,30 @@ class HttpTest(unittest.TestCase):
     @mock.patch('requests.request')
     @mock.patch('flume.logger.warn')
     def test_http_read_can_handle_grok_format_corectly(self, mock_warn, mock_request):
-        syslog = open('examples/grok/syslog')
-        mock_request.return_value = dici(**{
-            'status_code': 200,
-            'iter_content': lambda chunk_size: syslog.readlines(),
-            'headers': []
-        })
+        with open('examples/grok/syslog') as syslog:
+            mock_request.return_value = dici(**{
+                'status_code': 200,
+                'iter_content': lambda chunk_size: syslog.readlines(),
+                'headers': []
+            })
 
-        results = []
-        (
-            read('http',
-                 method='GET',
-                 url='http://localhost:8080/syslog',
-                 format='grok',
-                 pattern='%{SYSLOGLINE}')
-            | reduce(count=count())
-            | keep('count')
-            | memory(results)
-        ).execute()
+            results = []
+            (
+                read('http',
+                     method='GET',
+                     url='http://localhost:8080/syslog',
+                     format='grok',
+                     pattern='%{SYSLOGLINE}')
+                | reduce(count=count())
+                | keep('count')
+                | memory(results)
+            ).execute()
 
-        expect(results).to.eq([{'count': 274}])
-        expect(mock_warn.call_args_list).to.eq([
-            mock.call('point missing time field "time"') for _ in range(0, 274)
-        ])
+            expect(results).to.eq([{'count': 274}])
+            expect(mock_warn.call_args_list).to.eq([
+                mock.call('point missing time field "time"') for _ in range(0, 274)
+            ])
 
-        expect(mock_request.call_args_list).to.eq([
-            mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
-        ])
+            expect(mock_request.call_args_list).to.eq([
+                mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
+            ])

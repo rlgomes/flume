@@ -7,11 +7,21 @@ common module
 """
 import bisect
 import logging
+import six
 import sys
 import threading
 
-from Queue import Empty
-from Queue import Queue as queue
+from flume import util
+
+
+if util.IS_PY2:
+    from Queue import Empty
+    from Queue import Queue as queue
+
+else:
+    from queue import Queue as queue
+    from queue import Empty
+
 from flume import logger
 from flume import moment
 
@@ -169,7 +179,7 @@ class node(object):
                     points = []
 
                 for point in points:
-                    point = Point(**point.copy())
+                    point = Point(**point)
 
                     if point == self.EOF:
                         self.inputs.remove(input)
@@ -196,7 +206,8 @@ class node(object):
         push the provided points to the outputs of this node so that other
         nodes downstream can receive it
         """
-        if not isinstance(points, list):
+        
+        if isinstance(points, Point):
             points = [points]
 
         logger.debug('%s pushing %s points', self, len(points))
@@ -207,7 +218,7 @@ class node(object):
                     output.put([self.EOF])
 
                 else:
-                    output.put([Point(**point.copy())])
+                    output.put([Point(**point)])
 
     def __ror__(self, other):
         """
@@ -256,7 +267,7 @@ class node(object):
 
         finally:
             # must make sure to push EOF even if there was a failure
-            self.push(self.EOF)
+            self.push([self.EOF])
 
     def execute(self,
                 wait=True,
@@ -295,7 +306,7 @@ class node(object):
             exc_info = self.exc_info.get()
 
             if exc_info is not None:
-                raise exc_info[0], exc_info[1], exc_info[2]
+                six.reraise(exc_info[0], exc_info[1], exc_info[2])
 
     def input_count(self):
         """
@@ -427,11 +438,13 @@ class splitter(node):
             # start underlying flumes
             for flume in self.flumes:
                 flume.execute(wait=False,
-                                debug=debug,
-                                loglevel=loglevel)
+                              debug=debug,
+                              loglevel=loglevel)
 
         # override default behavior to execute the underlying flume
         node.execute(self,
                      wait=False,
                      debug=debug,
                      loglevel=loglevel)
+
+

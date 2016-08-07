@@ -1,2 +1,2 @@
-from emit import emit
-from read import read
+from flume.sources.emit import emit
+from flume.sources.read import read

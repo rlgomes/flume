@@ -8,10 +8,10 @@ import unittest
 
 import mock
 
-from StringIO import StringIO
 from robber import expect
 
 from flume import *
+from test.unit.util import StringIO
 
 
 class StdioTest(unittest.TestCase):

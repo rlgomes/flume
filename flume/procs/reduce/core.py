@@ -5,6 +5,7 @@ reducer proc
 import copy
 
 from flume import moment, node, Point, reducer
+from flume import util
 
 
 class reduce(node):
@@ -52,7 +53,7 @@ class reduce(node):
             points = self.pull()
 
             for point in points:
-                by_key = ':'.join([unicode(point[by]) for by in self.by])
+                by_key = ':'.join([util.u(point[by]) for by in self.by])
 
                 if 'time' in point:
                     if batch_start is None:
@@ -142,7 +143,7 @@ class reduce(node):
                         fields_copy[key] = value.result()
 
                     else:
-                        if isinstance(value, str) or isinstance(value, unicode):
+                        if util.is_string(value):
                             fields_copy[key] = value.format(**point.json())
 
                         else:
