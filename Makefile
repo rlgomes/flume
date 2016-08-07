@@ -1,7 +1,7 @@
 
 coverage: test-install
 	coverage run setup.py test
-	coverage report --show-missing --include=flume*
+	coverage report --show-missing --include=flume* --fail-under=90
 
 integration: test-install
 	python -m unittest discover -v -s test/integration
