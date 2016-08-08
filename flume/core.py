@@ -7,12 +7,14 @@ common module
 """
 import bisect
 import logging
-import six
 import sys
 import threading
 
-from flume import util
+import six
 
+from flume import moment
+from flume import logger
+from flume import util
 
 if util.IS_PY2:
     from Queue import Empty
@@ -22,11 +24,9 @@ else:
     from queue import Queue as queue
     from queue import Empty
 
-from flume import logger
-from flume import moment
-
 from flume.exceptions import FlumineException
 from flume.point import Point
+
 
 __SOURCES = {}
 __PROCS = {}
@@ -271,7 +271,6 @@ class node(object):
 
     def execute(self,
                 wait=True,
-                debug=False,
                 loglevel=logger.WARN):
 
         if 'inited' not in self.__dict__ or not self.inited:
@@ -281,7 +280,7 @@ class node(object):
         #      on it shouldn't fail
         if not hasattr(self, 'outputs'):
             node.init_node(self, outputs=[])
-
+        
         logger.setLogLevel(loglevel)
 
         # XXX: pooling here ?
@@ -293,8 +292,7 @@ class node(object):
         thread.start()
 
         if self.parent:
-            self.parent.execute(wait=wait,
-                                debug=debug)
+            self.parent.execute(wait=wait, loglevel=loglevel)
 
         if wait:
             while thread.is_alive():
@@ -385,7 +383,6 @@ class splitter(node):
 
     def execute(self,
                 wait=True,
-                debug=False,
                 loglevel=logging.ERROR):
 
         def find_root(flume):
@@ -432,19 +429,14 @@ class splitter(node):
                            source=source)
 
             forwarder.execute(wait=False,
-                              debug=debug,
                               loglevel=loglevel)
 
             # start underlying flumes
             for flume in self.flumes:
                 flume.execute(wait=False,
-                              debug=debug,
                               loglevel=loglevel)
 
         # override default behavior to execute the underlying flume
         node.execute(self,
                      wait=False,
-                     debug=debug,
                      loglevel=loglevel)
-
-
