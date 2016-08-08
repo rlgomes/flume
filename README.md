@@ -1,6 +1,6 @@
 # flume
 
-[![Build Status](https://travis-ci.org/rlgomes/flume.svg?branch=master)](https://travis-ci.org/rlgomes/flume)
+[![Build Status](https://travis-ci.org/rlgomes/flume.svg?branch=master)](https://travis-ci.org/rlgomes/flume) [![Coverage Status](https://coveralls.io/repos/github/rlgomes/flume/badge.svg?branch=master)](https://coveralls.io/github/rlgomes/flume?branch=master)
 
 **flume** (pronounced *floom*) is a stream processing framework based off of an
 older project called [juttle](http://juttle.github.io) from work I did at a previous
