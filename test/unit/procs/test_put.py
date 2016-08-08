@@ -64,7 +64,8 @@ class PutTest(unittest.TestCase):
         results = []
         (
             emit(limit=3, start='2013-01-01')
-            | put(count=count(), message='this is line #{count}')
+            | put(count=count())
+            | put(message='this is line #{count}')
             | remove('time', 'count')
             | memory(results)
         ).execute()
@@ -78,7 +79,8 @@ class PutTest(unittest.TestCase):
         results = []
         (
             emit(limit=3, start='2013-01-01')
-            | put(count=count(), message='this happened at "{time}"')
+            | put(count=count())
+            | put(message='this happened at "{time}"')
             | remove('time', 'count')
             | memory(results)
         ).execute()

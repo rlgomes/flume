@@ -2,7 +2,7 @@
 put processor
 """
 from flume import node, reducer
-
+from flume.util import is_string
 
 class put(node):
 
@@ -24,7 +24,7 @@ class put(node):
                         point[key] = value.result()
 
                     else:
-                        if isinstance(value, str) or isinstance(value, unicode):
+                        if is_string(value):
                             point[key] = value.format(**point.json())
 
                         else:

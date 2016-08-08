@@ -4,13 +4,13 @@ gnuplot unit tests
 import unittest
 import mock
 
-from StringIO import StringIO
-
 from bunch import Bunch
 from robber import expect
 
 from flume.sinks.views import PyGal
 from flume import moment
+
+from test.unit.util import StringIO
 
 def bar():
     class Bar(object):

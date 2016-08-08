@@ -13,7 +13,9 @@ import pytz
 
 from delta import parse
 from dateutil import parser
+
 from flume.exceptions import FlumineException
+from flume.util import is_string
 
 
 def __make_utc(dt):
@@ -49,8 +51,7 @@ def end():
 
 def forever():
     """
-    returns a timedelta that represents forever
-    """
+    returns a timedelta that represents forever """
     return timedelta.max
 
 
@@ -63,12 +64,12 @@ def date(string):
     if isinstance(string, datetime):
         return string
 
-    elif isinstance(string, str) or isinstance(string, unicode):
+    elif is_string(string):
         dt = None
         try:
             dt = parser.parse(string)
         except ValueError as exception:
-            if exception.message == 'Unknown string format':
+            if str(exception) == 'Unknown string format':
                 # lets parse the possible relative time with parsedatetime
                 struct_time, result = parsedatetime.Calendar().parse(string)
 
@@ -109,7 +110,7 @@ def duration(string, context=None):
     if isinstance(string, timedelta):
         return string
 
-    elif isinstance(string, str):
+    elif is_string(string):
         delta = parse(string, context=context)
 
         if delta is None:

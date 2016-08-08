@@ -19,7 +19,7 @@ class SortTest(unittest.TestCase):
 
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('order can be "asc" or "desc", not "bananas"')
+            expect(exception.message).to.contain('order can be "asc" or "desc", not "bananas"')
 
     def test_sort_limits_exceeded(self):
         try:
@@ -31,7 +31,7 @@ class SortTest(unittest.TestCase):
 
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('sort buffer overflown, limit is 5, buffering 6')
+            expect(exception.message).to.contain('sort buffer overflown, limit is 5, buffering 6')
 
     def test_sort_with_no_fields_is_idempotent(self):
         results = []

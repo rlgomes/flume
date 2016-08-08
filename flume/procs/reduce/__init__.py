@@ -1,3 +1,3 @@
-from core import reduce
+from flume.procs.reduce.core import reduce
 
-from reducers import *
+from flume.procs.reduce.reducers import *

@@ -4,12 +4,11 @@ base streamer unittests
 
 import unittest
 
-from StringIO import StringIO
+from robber import expect
 
 from flume.adapters.streamers import Streamer, register_streamer, get_streamer
 from flume.exceptions import FlumineException
-
-from robber import expect
+from test.unit.util import StringIO
 
 
 class BaseStreamersTest(unittest.TestCase):
@@ -20,7 +19,7 @@ class BaseStreamersTest(unittest.TestCase):
             register_streamer('non-unique', object())
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('"non-unique" streamer already registered')
+            expect(exception.message).to.contain('"non-unique" streamer already registered')
 
     def test_register_and_get_streamer_by_name(self):
         class TestStreamer(Streamer):
@@ -37,7 +36,7 @@ class BaseStreamersTest(unittest.TestCase):
             get_streamer('non-existent')
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('"non-existent" streamer not registered')
+            expect(exception.message).to.contain('"non-existent" streamer not registered')
 
     def test_new_streamer_must_have_a_read_method(self):
         try:
@@ -50,7 +49,7 @@ class BaseStreamersTest(unittest.TestCase):
             streamer.read(stream)
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('you must implement the read method')
+            expect(exception.message).to.contain('you must implement the read method')
 
     def test_new_streamer_must_have_a_write_method(self):
         try:
@@ -63,4 +62,4 @@ class BaseStreamersTest(unittest.TestCase):
             streamer.write(stream, [])
             raise Exception('previous statement should have failed')
         except FlumineException as exception:
-            expect(exception).to.contain('you must implement the write method')
+            expect(exception.message).to.contain('you must implement the write method')

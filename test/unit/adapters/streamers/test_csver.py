@@ -3,12 +3,11 @@ csv streamer unittests
 """
 import unittest
 
-from StringIO import StringIO
-
 from robber import expect
 
 from flume import Point
 from flume.adapters.streamers import get_streamer
+from test.unit.util import StringIO
 
 
 class CSVStreamerTest(unittest.TestCase):

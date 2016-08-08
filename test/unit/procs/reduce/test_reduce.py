@@ -463,10 +463,20 @@ class ReduceTest(unittest.TestCase):
             | reduce(count=count(), by=['author.name'])
             | memory(results)
         ).execute()
-        expect(results).to.eq([
-            {'time': '2016-01-01T00:00:00.000Z', 'author': {'name': 'bob'}, 'count': 2},
-            {'time': '2016-01-01T00:00:00.000Z', 'author': {'name': 'joe'}, 'count': 3}
-        ])
+        expect(results).to.contain({
+            'time': '2016-01-01T00:00:00.000Z',
+            'author': {
+                'name': 'bob'
+            },
+            'count': 2
+        })
+        expect(results).to.contain({
+            'time': '2016-01-01T00:00:00.000Z',
+            'author': {
+                'name': 'joe'
+            },
+            'count': 3
+        })
 
     def test_reduce_maximum_on_nested_field(self):
         results = []
