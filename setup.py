@@ -9,7 +9,7 @@ def load(filename):
 
 setup(
     name='flume',
-    version='0.3',
+    version=open('flume/VERSION').read(),
     author='Rodney Gomes',
     author_email='rodneygomes@gmail.com',
     url='',
@@ -19,6 +19,7 @@ setup(
     keywords=[''],
     py_modules=['flume'],
     packages=find_packages(exclude=['test']),
+    include_package_data=True,
 
     entry_points={
         'console_scripts': [

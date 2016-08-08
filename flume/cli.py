@@ -15,9 +15,12 @@ FLUMERC_LOCATIONS = [
     os.path.join(os.getcwd(), '.flumerc.py'),
 ]
 
+import flume
+VERSION = open(os.path.join(os.path.dirname(flume.__file__),
+                            'VERSION')).read().strip()
 
 @click.command()
-@click.version_option(version='0.1')
+@click.version_option(version=VERSION)
 @click.option('--debug', '-d', count=True, help='debug mode')
 @click.argument('program')
 def main(program=None,
