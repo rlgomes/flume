@@ -37,7 +37,4 @@ class read(node):
                     if self.time != 'time':
                         del point[self.time]
 
-                else:
-                    logger.warn('point missing time field "%s"' % self.time)
-
             self.push(points)

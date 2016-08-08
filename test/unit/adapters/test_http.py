@@ -19,36 +19,6 @@ from flume import moment
 class HttpTest(unittest.TestCase):
 
     @mock.patch('requests.request')
-    @mock.patch('flume.logger.warn')
-    def test_http_read_with_no_time_field_produces_warning(self, mock_warn, mock_request):
-        with open('examples/grok/syslog') as syslog:
-            mock_request.return_value = dici(**{
-                'status_code': 200,
-                'iter_content': lambda chunk_size: syslog.readlines(),
-                'headers': []
-            })
-
-            results = []
-            (
-                read('http',
-                     method='GET',
-                     url='http://localhost:8080/syslog',
-                     format='grok',
-                     pattern='%{SYSLOGLINE}')
-                | memory(results)
-            ).execute()
-
-            expect(len(results)).to.eq(274)
-            expect(len(mock_warn.call_args_list)).to.eq(274)
-            expect(mock_warn.call_args_list).to.eq([
-                mock.call('point missing time field "time"') for _ in range(0, 274)
-            ])
-
-            expect(mock_request.call_args_list).to.eq([
-                mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
-            ])
-
-    @mock.patch('requests.request')
     def test_http_read_with_expected_400_status(self, mock_request):
         mock_request.return_value = dici(**{
             'status_code': 400,
@@ -540,8 +510,7 @@ class HttpTest(unittest.TestCase):
         ])
 
     @mock.patch('requests.request')
-    @mock.patch('flume.logger.warn')
-    def test_http_read_can_handle_grok_format_corectly(self, mock_warn, mock_request):
+    def test_http_read_can_handle_grok_format_corectly(self, mock_request):
         with open('examples/grok/syslog') as syslog:
             mock_request.return_value = dici(**{
                 'status_code': 200,
@@ -562,10 +531,6 @@ class HttpTest(unittest.TestCase):
             ).execute()
 
             expect(results).to.eq([{'count': 274}])
-            expect(mock_warn.call_args_list).to.eq([
-                mock.call('point missing time field "time"') for _ in range(0, 274)
-            ])
-
             expect(mock_request.call_args_list).to.eq([
                 mock.call('GET', 'http://localhost:8080/syslog', headers=None, stream=True)
             ])

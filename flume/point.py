@@ -42,7 +42,7 @@ class Point(dici):
         lookup the value of a field specified with the dot notation
         """
         try:
-            return eval('self.%s' % dot_notation)
+            return self.__getattr__(dot_notation)
         except AttributeError:
             pass
         except KeyError:
