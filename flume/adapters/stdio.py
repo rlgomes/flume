@@ -6,8 +6,30 @@ import sys
 from flume.adapters.adapter import adapter
 from flume.adapters import streamers
 from flume.point import Point
-from flume import logger, moment
 
+
+class InputStream(object):
+    """
+    Override the behaviour of readlines which doesn't actually stream data but
+    attempts to read the whole input and break it into individual lines. We want
+    the input to stream line by line and not block the pipeline.
+    """
+
+    def __init__(self, file):
+        self.file = file
+
+    def read(self, size=1024):
+        return self.file.read(size=1024)
+
+    def readlines(self):
+
+        while True:
+            line = self.file.readline()
+
+            if not line:
+                break
+
+            yield line
 
 class stdio(adapter):
     """
@@ -32,11 +54,12 @@ class stdio(adapter):
 
     def read(self):
         if self.file is None:
-            for point in self.streamer.read(stdio.stdin):
+            for point in self.streamer.read(InputStream(stdio.stdin)):
                 yield [Point(**point)]
 
         else:
             with open(self.file, 'r') as stream:
+                stream = InputStream(stream)
                 for point in self.streamer.read(stream):
                     yield [Point(**point)]
 
