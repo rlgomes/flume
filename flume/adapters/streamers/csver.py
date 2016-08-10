@@ -9,13 +9,19 @@ from flume import Point
 
 class CSV(Streamer):
 
-    def __init__(self, headers=True):
+    def __init__(self,
+                 headers=True,
+                 delimiter=',',
+                 ignore_whitespace=True):
         self.writer = None
         self.headers = headers
+        self.delimiter = delimiter
+        self.ignore_whitespace = ignore_whitespace
 
     def read(self, stream):
-        # XXX: expose the delimiter, quotechar...etc.
-        reader = csv.DictReader(stream)
+        reader = csv.DictReader(stream.readlines(),
+                                delimiter=self.delimiter,
+                                skipinitialspace=self.ignore_whitespace)
 
         for point in reader:
             # XXX: buffer N points before pushing out ? 

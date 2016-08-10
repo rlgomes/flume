@@ -13,6 +13,7 @@ following options available at this time:
 read('stdio',
      format='jsonl',
      file=None,
+     strip_ansi=False,
      time='time') | ...
 ```
 
@@ -20,6 +21,7 @@ Argument    | Description                                                       
 ----------- | --------------------------------------------------------------------------- | :---------
 format      | format specifier used to pick a different kind of [streamer](streamers/)    | No, default: `jsonl`
 file        | filename to read from, when not specified we read from STDIN                | No, default: `None`
+strip_ansi  | when set to `True` then all ANSI sequences are removed from the input       | No, default: `False`
 time        | field name that contains valid timestamp                                    | No, default: `time`
 
 ## write
@@ -31,6 +33,7 @@ following options available at this time:
 write('stdio',
       format='jsonl',
       file=None,
+      append=False,
       time='time') | ...
 ```
 
@@ -38,6 +41,7 @@ Argument    | Description                                                       
 ----------- | --------------------------------------------------------------------------- | :---------
 format      | format specifier used to pick a different kind of [streamer](streamers/)    | No, default: `jsonl`
 file        | filename to write to, when not specified we read from STDOUT                | No, default: `None`
+append      | boolean that specifies if we should append or not to any existing output    | No, default: `False`
 time        | field name that contains valid timestamp                                    | No, default: `time`
 
 

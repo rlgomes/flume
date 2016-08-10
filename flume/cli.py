@@ -1,6 +1,5 @@
 """
-flume command line utility
-"""
+flume command line utility """
 import imp
 import logging
 import os
