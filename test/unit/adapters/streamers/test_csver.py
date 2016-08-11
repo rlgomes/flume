@@ -7,14 +7,14 @@ from robber import expect
 
 from flume import Point
 from flume.adapters.streamers import get_streamer
-from test.unit.util import StringIO
+from test.unit.util import FakeIO
 
 
 class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_read_an_empty_stream(self):
         streamer = get_streamer('csv')
-        stream = StringIO('')
+        stream = FakeIO('')
         points = []
 
         for point in streamer.read(stream):
@@ -24,7 +24,7 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_read_a_single_point(self):
         streamer = get_streamer('csv')
-        stream = StringIO('time\n2016-01-01T00:00:00.000Z\n')
+        stream = FakeIO('time\n2016-01-01T00:00:00.000Z\n')
 
         points = []
 
@@ -37,10 +37,10 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_read_multiple_points(self):
         streamer = get_streamer('csv')
-        stream = StringIO('time,foo\n' +
-                          '2016-01-01T00:00:00.000Z,1\n' +
-                          '2016-01-01T00:00:01.000Z,2\n' +
-                          '2016-01-01T00:00:02.000Z,3')
+        stream = FakeIO('time,foo\n' +
+                        '2016-01-01T00:00:00.000Z,1\n' +
+                        '2016-01-01T00:00:01.000Z,2\n' +
+                        '2016-01-01T00:00:02.000Z,3')
         points = []
 
         for point in streamer.read(stream):
@@ -54,10 +54,10 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_handle_blank_lines(self):
         streamer = get_streamer('csv')
-        stream = StringIO('time,foo\n' +
-                          '2016-01-01T00:00:00.000Z,1\n' +
-                          '\n' +
-                          '2016-01-01T00:00:01.000Z,2\n')
+        stream = FakeIO('time,foo\n' +
+                        '2016-01-01T00:00:00.000Z,1\n' +
+                        '\n' +
+                        '2016-01-01T00:00:01.000Z,2\n')
         points = []
 
         for point in streamer.read(stream):
@@ -70,10 +70,10 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_write_an_empty_stream(self):
         streamer = get_streamer('csv')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [])
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 
@@ -84,12 +84,12 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_write_a_single_point(self):
         streamer = get_streamer('csv')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [
             Point(time='2016-01-01T00:00:00.000Z')
         ])
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 
@@ -102,14 +102,14 @@ class CSVStreamerTest(unittest.TestCase):
 
     def test_csv_streamer_can_write_multiple_points(self):
         streamer = get_streamer('csv')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [
             Point(time='2016-01-01T00:00:00.000Z', foo=1),
             Point(time='2016-01-01T00:00:01.000Z', foo=2),
             Point(time='2016-01-01T00:00:02.000Z', foo=3)
         ])
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 

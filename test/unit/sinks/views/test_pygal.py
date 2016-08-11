@@ -10,7 +10,7 @@ from robber import expect
 from flume.sinks.views import PyGal
 from flume import moment
 
-from test.unit.util import StringIO
+from test.unit.util import FakeIO
 
 def bar():
     class Bar(object):
@@ -34,7 +34,7 @@ def bar():
 
 class PyGalTest(unittest.TestCase):
 
-    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('sys.stdout', new_callable=FakeIO)
     @mock.patch('tempfile.mkstemp')
     @mock.patch('pygal.Bar', new_callable=bar)
     def test_can_render_a_simple_barchart_to_png(self,
@@ -61,7 +61,7 @@ class PyGalTest(unittest.TestCase):
         })
 
 
-    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('sys.stdout', new_callable=FakeIO)
     @mock.patch('tempfile.mkstemp')
     @mock.patch('pygal.Bar', new_callable=bar)
     def test_can_render_a_simple_barchart_to_html(self,

@@ -8,7 +8,7 @@ from robber import expect
 
 from flume.adapters.streamers import Streamer, register_streamer, get_streamer
 from flume.exceptions import FlumineException
-from test.unit.util import StringIO
+from test.unit.util import FakeIO
 
 
 class BaseStreamersTest(unittest.TestCase):
@@ -44,7 +44,7 @@ class BaseStreamersTest(unittest.TestCase):
                 def __init__(self):
                     pass
 
-            stream = StringIO()
+            stream = FakeIO()
             streamer = TestStreamer()
             streamer.read(stream)
             raise Exception('previous statement should have failed')
@@ -57,7 +57,7 @@ class BaseStreamersTest(unittest.TestCase):
                 def __init__(self):
                     pass
 
-            stream = StringIO()
+            stream = FakeIO()
             streamer = TestStreamer()
             streamer.write(stream, [])
             raise Exception('previous statement should have failed')
