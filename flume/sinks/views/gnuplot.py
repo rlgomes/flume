@@ -19,11 +19,13 @@ class Gnuplot(base):
                  title='',
                  width=1280,
                  height=1024,
-                 terminal='dumb'):
+                 terminal='dumb',
+                 timefmt='%Y/%d/%m-%H:%M:%S'):
         self.title = title
         self.width = width
         self.height = height
         self.terminal = terminal
+        self.timefmt = timefmt
 
         if terminal == 'dumb':
             self.process = None
@@ -89,9 +91,11 @@ class Gnuplot(base):
 
         if chart_type == 'linechart' or chart_type == 'timechart':
             if x_is_time:
-                self.write('set xdata time\n')
-                self.write('set format x "%H:%M:%S"\n')
-                self.write('set timefmt "%Y/%d/%m-%H:%M:%S"\n')
+
+                if chart_type == 'timechart':
+                    self.write('set xdata time\n')
+                    self.write('set format x "%s"\n' % self.timefmt)
+                    self.write('set timefmt "%s"\n' % self.timefmt)
 
             series_string = ['"%s" using 1:2 with linespoints title "%s"' % \
                              (os.path.join(tmp, '%s.dat' % series_name), series_name)
