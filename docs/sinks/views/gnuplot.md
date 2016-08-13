@@ -18,9 +18,10 @@ somewhat interactive.
 where chart_type can be [barchart](../barchart), [linechart](../linechart),
 [timechart](../timechart).
 
-Argument  | Description                                                                  | Required?
---------- | ---------------------------------------------------------------------------- | :---------
-title     | title to use on the resulting chart                                          | Yes, default: `None`
-width     | width of the chart to render in pixels                                       | No, default: `1280`
-height    | height of the chart to render in pixels                                      | No, default: `1024`
-terminal  | gnuplot [terminal](http://www.gnuplotting.org/output-terminals/) type to use | No, default: `terminal`
+Argument  | Description                                                                              | Required?
+--------- | ---------------------------------------------------------------------------------------- | :---------
+title     | title to use on the resulting chart                                                      | Yes, default: `None`
+width     | width of the chart to render in pixels                                                   | No, default: `1280`
+height    | height of the chart to render in pixels                                                  | No, default: `1024`
+terminal  | gnuplot [terminal](http://www.gnuplotting.org/output-terminals/) type to use             | No, default: `terminal`
+timefmt   | exposes the [timefmt](http://gnuplot.sourceforge.net/docs_4.2/node274.html) from gnuplot | No, default: `%Y/%d/%m-%H:%M:%S`

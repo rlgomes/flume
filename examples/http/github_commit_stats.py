@@ -22,9 +22,8 @@ except NameError:
     pass
 
 print('Github commit repo stats')
-owner = raw_input('Name of the github repo owner (default: elastic): ') or 'elastic'
-repo = raw_input('Name of the github repo (default: kibana): ') or 'kibana'
-issue = raw_input('Isssue # (default: 1610): ') or '1610'
+owner = raw_input('Name of the github repo owner (default: rlgomes): ') or 'rlgomes'
+repo = raw_input('Name of the github repo (default: delta): ') or 'delta'
 
 (
     read('http',

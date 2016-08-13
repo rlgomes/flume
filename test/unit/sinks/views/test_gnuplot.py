@@ -95,7 +95,7 @@ class GnuplotTest(unittest.TestCase):
             # 25 comes from 20 * 1.25 we're doing 25% padding of the y value height
             mock.call('set yrange [0:25]\n'),
             mock.call('set xdata time\n'),
-            mock.call('set format x "%H:%M:%S"\n'),
+            mock.call('set format x "%Y/%d/%m-%H:%M:%S"\n'),
             mock.call('set timefmt "%Y/%d/%m-%H:%M:%S"\n'),
             mock.call('plot "/tmp/series1.dat" using 1:2 with linespoints title "series1"\n')
         ])
@@ -208,7 +208,7 @@ class GnuplotTest(unittest.TestCase):
         mock_mkdtemp.return_value = '/tmp'
 
         view = Gnuplot(terminal='x11')
-        view.render('linechart', {
+        view.render('timechart', {
             'series1': [
                 (moment.date('2016-01-01T00:00:00.000Z'), 10),
                 (moment.date('2016-01-01T00:00:01.000Z'), 20),
@@ -222,7 +222,7 @@ class GnuplotTest(unittest.TestCase):
             # 25 comes from 20 * 1.25 we're doing 25% padding of the y value height
             mock.call('set yrange [0:25]\n'),
             mock.call('set xdata time\n'),
-            mock.call('set format x "%H:%M:%S"\n'),
+            mock.call('set format x "%Y/%d/%m-%H:%M:%S"\n'),
             mock.call('set timefmt "%Y/%d/%m-%H:%M:%S"\n'),
             mock.call('plot "/tmp/series1.dat" using 1:2 with linespoints title "series1"\n')
         ])
