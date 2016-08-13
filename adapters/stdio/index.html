@@ -437,6 +437,7 @@ following options available at this time:</p>
 <pre><code class="python">read('stdio',
      format='jsonl',
      file=None,
+     strip_ansi=False,
      time='time') | ...
 </code></pre>
 
@@ -460,6 +461,11 @@ following options available at this time:</p>
 <td>No, default: <code>None</code></td>
 </tr>
 <tr>
+<td>strip_ansi</td>
+<td>when set to <code>True</code> then all ANSI sequences are removed from the input</td>
+<td>No, default: <code>False</code></td>
+</tr>
+<tr>
 <td>time</td>
 <td>field name that contains valid timestamp</td>
 <td>No, default: <code>time</code></td>
@@ -472,6 +478,7 @@ following options available at this time:</p>
 <pre><code class="python">write('stdio',
       format='jsonl',
       file=None,
+      append=False,
       time='time') | ...
 </code></pre>
 
@@ -493,6 +500,11 @@ following options available at this time:</p>
 <td>file</td>
 <td>filename to write to, when not specified we read from STDOUT</td>
 <td>No, default: <code>None</code></td>
+</tr>
+<tr>
+<td>append</td>
+<td>boolean that specifies if we should append or not to any existing output</td>
+<td>No, default: <code>False</code></td>
 </tr>
 <tr>
 <td>time</td>
