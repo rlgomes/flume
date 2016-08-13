@@ -206,7 +206,7 @@ class node(object):
         push the provided points to the outputs of this node so that other
         nodes downstream can receive it
         """
-        
+
         if isinstance(points, Point):
             points = [points]
 
