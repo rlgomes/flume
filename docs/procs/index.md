@@ -13,6 +13,7 @@ and you can always create your own.
  * [keep](keep/)
  * [put](put/)
  * [remove](remove/)
+ * [seq](seq/)
  * [sort](sort/)
  * [tail](tail/)
  * [union](union/)

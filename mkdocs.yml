@@ -38,6 +38,7 @@ pages:
             - 'maximum': 'procs/reduce/reducers/maximum.md'
             - 'minimum': 'procs/reduce/reducers/minimum.md'
         - 'remove': 'procs/remove.md'
+        - 'seq': 'procs/seq.md'
         - 'sort': 'procs/sort.md'
         - 'tail': 'procs/tail.md'
         - 'union': 'procs/union.md'

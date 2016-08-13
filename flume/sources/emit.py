@@ -114,7 +114,7 @@ class emit(node):
                                     1,
                                     push_point,
                                     (current_time, count))
-
+            
                 scheduler.enter(every_seconds,
                                 1,
                                 push_point,

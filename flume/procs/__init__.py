@@ -13,6 +13,8 @@ from flume.procs.filter import filter
 # pylint: disable=redefined-builtin
 from flume.procs.reduce import reduce
 
+from flume.procs.seq import seq
+
 from flume.procs.reorder import reorder
 from flume.procs.sort import sort
 
