@@ -1,5 +1,5 @@
 """
-regex streamer
+grok streamer
 """
 import pygrok
 

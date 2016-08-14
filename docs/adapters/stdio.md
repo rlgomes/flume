@@ -14,7 +14,8 @@ read('stdio',
      format='jsonl',
      file=None,
      strip_ansi=False,
-     time='time') | ...
+     time='time',
+     compression=None) | ...
 ```
 
 Argument    | Description                                                                 | Required?
@@ -23,6 +24,10 @@ format      | format specifier used to pick a different kind of [streamer](strea
 file        | filename to read from, when not specified we read from STDIN                | No, default: `None`
 strip_ansi  | when set to `True` then all ANSI sequences are removed from the input       | No, default: `False`
 time        | field name that contains valid timestamp                                    | No, default: `time`
+compression | specify the compression algorithm to use (*)                                | No, default: `None`
+
+(*) supported compression formats: gzip, zlib, deflate
+
 
 ## write
 
@@ -34,7 +39,8 @@ write('stdio',
       format='jsonl',
       file=None,
       append=False,
-      time='time') | ...
+      time='time',
+      compression=None) | ...
 ```
 
 Argument    | Description                                                                 | Required?
@@ -43,7 +49,9 @@ format      | format specifier used to pick a different kind of [streamer](strea
 file        | filename to write to, when not specified we read from STDOUT                | No, default: `None`
 append      | boolean that specifies if we should append or not to any existing output    | No, default: `False`
 time        | field name that contains valid timestamp                                    | No, default: `time`
+compression | specify the compression algorithm to use (*)                                | No, default: `None`
 
+(*) supported compression formats: gzip, zlib, deflate
 
 ## reading data from dmesg
 

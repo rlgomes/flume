@@ -3,7 +3,7 @@ grok streamer unittests
 """
 import unittest
 
-from test.unit.util import StringIO
+from test.unit.util import FakeIO
 
 from robber import expect
 
@@ -15,7 +15,7 @@ class GrokStreamerTest(unittest.TestCase):
 
     def test_grok_streamer_can_read_an_empty_stream(self):
         streamer = get_streamer('grok')
-        stream = StringIO('')
+        stream = FakeIO('')
         points = []
 
         for point in streamer.read(stream):
@@ -25,7 +25,7 @@ class GrokStreamerTest(unittest.TestCase):
 
     def test_grok_streamer_can_read_a_single_point_with_default_pattern(self):
         streamer = get_streamer('grok')
-        stream = StringIO('just a simple line')
+        stream = FakeIO('just a simple line')
 
         points = []
 
@@ -38,9 +38,9 @@ class GrokStreamerTest(unittest.TestCase):
 
     def test_grok_streamer_can_read_multiple_points_with_default_pattern(self):
         streamer = get_streamer('grok')
-        stream = StringIO('one log line\n' +
-                          'another log line\n' +
-                          'yet another log line\n')
+        stream = FakeIO('one log line\n' +
+                        'another log line\n' +
+                        'yet another log line\n')
 
         points = []
         for point in streamer.read(stream):
@@ -54,11 +54,11 @@ class GrokStreamerTest(unittest.TestCase):
 
     def test_grok_streamer_can_handle_blank_lines_with_default_pattern(self):
         streamer = get_streamer('grok')
-        stream = StringIO('one log line\n' +
-                          '\n' +
-                          'another log line\n' +
-                          '\n' +
-                          'yet another log line\n')
+        stream = FakeIO('one log line\n' +
+                        '\n' +
+                        'another log line\n' +
+                        '\n' +
+                        'yet another log line\n')
         points = []
 
         for point in streamer.read(stream):

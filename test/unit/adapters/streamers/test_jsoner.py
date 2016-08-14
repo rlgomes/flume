@@ -7,14 +7,14 @@ from robber import expect
 
 from flume.adapters.streamers import get_streamer
 from flume import Point
-from test.unit.util import StringIO
+from test.unit.util import FakeIO
 
 
 class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_read_an_empty_stream(self):
         streamer = get_streamer('json')
-        stream = StringIO('[]')
+        stream = FakeIO('[]')
         points = []
 
         for point in streamer.read(stream):
@@ -24,7 +24,7 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_read_a_single_point(self):
         streamer = get_streamer('json')
-        stream = StringIO('[{"foo": "bar"}]')
+        stream = FakeIO('[{"foo": "bar"}]')
         points = []
 
         for point in streamer.read(stream):
@@ -34,7 +34,7 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_read_multiple_points(self):
         streamer = get_streamer('json')
-        stream = StringIO("""[{"time": "2016-01-01T00:00:00.000Z", "foo": 1},
+        stream = FakeIO("""[{"time": "2016-01-01T00:00:00.000Z", "foo": 1},
         {"time": "2016-01-01T00:00:01.000Z", "foo": 2},
         {"time": "2016-01-01T00:00:02.000Z", "foo": 3}
         ]""")
@@ -51,7 +51,7 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_handle_blank_lines(self):
         streamer = get_streamer('json')
-        stream = StringIO("""[
+        stream = FakeIO("""[
         {"time": "2016-01-01T00:00:00.000Z", "foo": 1},
         {"time": "2016-01-01T00:00:01.000Z", "foo": 2}
         ]""")
@@ -67,11 +67,11 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_write_an_empty_stream(self):
         streamer = get_streamer('json')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [])
         streamer.eof(stream)
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
         for point in streamer.read(stream):
@@ -81,11 +81,11 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_write_a_single_point(self):
         streamer = get_streamer('json')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [Point(foo='bar')])
         streamer.eof(stream)
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 
@@ -96,11 +96,11 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_write_a_single_pretty_point(self):
         streamer = get_streamer('json', pretty=True)
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [Point(foo='bar')])
         streamer.eof(stream)
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 
@@ -111,7 +111,7 @@ class JSONStreamerTest(unittest.TestCase):
 
     def test_json_streamer_can_write_multiple_points(self):
         streamer = get_streamer('json')
-        stream = StringIO('')
+        stream = FakeIO('')
 
         streamer.write(stream, [
             Point(time='2016-01-01T00:00:00.000Z', foo=1),
@@ -119,7 +119,7 @@ class JSONStreamerTest(unittest.TestCase):
             Point(time='2016-01-01T00:00:02.000Z', foo=3)
         ])
         streamer.eof(stream)
-        stream = StringIO(stream.getvalue())
+        stream = FakeIO(stream.getvalue())
 
         points = []
 
