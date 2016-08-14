@@ -268,6 +268,12 @@
         
             
 <li >
+    <a href="../../procs/seq/">seq</a>
+</li>
+
+        
+            
+<li >
     <a href="../../procs/sort/">sort</a>
 </li>
 
@@ -438,7 +444,8 @@ following options available at this time:</p>
      format='jsonl',
      file=None,
      strip_ansi=False,
-     time='time') | ...
+     time='time',
+     compression=None) | ...
 </code></pre>
 
 <table>
@@ -470,8 +477,14 @@ following options available at this time:</p>
 <td>field name that contains valid timestamp</td>
 <td>No, default: <code>time</code></td>
 </tr>
+<tr>
+<td>compression</td>
+<td>specify the compression algorithm to use (*)</td>
+<td>No, default: <code>None</code></td>
+</tr>
 </tbody>
 </table>
+<p>(*) supported compression formats: gzip, zlib, deflate</p>
 <h2 id="write">write</h2>
 <p>Writing to <code>stdio</code> is done using the <a href="../../sinks/write">write</a> sink with the
 following options available at this time:</p>
@@ -479,7 +492,8 @@ following options available at this time:</p>
       format='jsonl',
       file=None,
       append=False,
-      time='time') | ...
+      time='time',
+      compression=None) | ...
 </code></pre>
 
 <table>
@@ -511,8 +525,14 @@ following options available at this time:</p>
 <td>field name that contains valid timestamp</td>
 <td>No, default: <code>time</code></td>
 </tr>
+<tr>
+<td>compression</td>
+<td>specify the compression algorithm to use (*)</td>
+<td>No, default: <code>None</code></td>
+</tr>
 </tbody>
 </table>
+<p>(*) supported compression formats: gzip, zlib, deflate</p>
 <h2 id="reading-data-from-dmesg">reading data from dmesg</h2>
 <p>The <code>dmesg</code> command has output that looks like so:</p>
 <pre><code class="bash">[83281.308572] EXT4-fs (dm-1): re-mounted. Opts: errors=remount-ro,commit=0
