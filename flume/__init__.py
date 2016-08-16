@@ -23,12 +23,14 @@ from flume.core import node, \
                        register_proc, \
                        register_sink
 
+from flume.thirdparty import *
+
 from flume.exceptions import *
 
 from flume.moment import *
 from flume.sources import *
 from flume.procs import *
-from flume.procs import * 
+from flume.procs import *
 from flume.sinks import *
 
 from flume.procs.reduce.reducers import *

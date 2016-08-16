@@ -1,6 +1,7 @@
 """
 stdio adapter
 """
+import codecs
 import re
 import sys
 import zlib
@@ -197,13 +198,21 @@ class stdio(adapter):
 
     def read(self):
         if self.file is None:
-            for point in self.streamer.read(InputStream(stdio.stdin,
-                                                        strip_ansi=self.strip_ansi,
-                                                        compression=self.compression)):
+            input_stream = InputStream(stdio.stdin,
+                                       strip_ansi=self.strip_ansi,
+                                       compression=self.compression)
+
+            for point in self.streamer.read(input_stream):
                 yield [Point(**point)]
 
         else:
-            with open(self.file, 'r') as stream:
+            if util.IS_PY2:
+                encoding = None
+
+            else:
+                encoding = _DEFAULT_ENCODING
+
+            with codecs.open(self.file, 'r', encoding=encoding) as stream:
                 stream = InputStream(stream,
                                      strip_ansi=self.strip_ansi,
                                      compression=self.compression)
@@ -223,8 +232,14 @@ class stdio(adapter):
                 else:
                     mode = 'w'
 
-                self.output = OutputStream(open(self.file, mode),
-                                           compression=self.compression)
+                if util.IS_PY2:
+                    encoding = None
+
+                else:
+                    encoding = _DEFAULT_ENCODING
+
+                output = codecs.open(self.file, mode, encoding=encoding)
+                self.output = OutputStream(output, compression=self.compression)
 
         self.streamer.write(self.output, points)
 
