@@ -1,3 +1,6 @@
+[run]
+source=flume
+
 [report]
 include=flume*
 show_missing=True
