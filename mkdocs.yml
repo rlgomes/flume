@@ -31,17 +31,19 @@ pages:
         - 'keep': 'procs/keep.md'
         - 'put': 'procs/put.md'
         - 'reduce': 'procs/reduce/index.md'
-        - Reducers:
-            - 'overview': 'procs/reduce/reducers/index.md'
-            - 'count': 'procs/reduce/reducers/count.md'
-            - 'iterate': 'procs/reduce/reducers/iterate.md'
-            - 'maximum': 'procs/reduce/reducers/maximum.md'
-            - 'minimum': 'procs/reduce/reducers/minimum.md'
         - 'remove': 'procs/remove.md'
         - 'seq': 'procs/seq.md'
         - 'sort': 'procs/sort.md'
         - 'tail': 'procs/tail.md'
         - 'union': 'procs/union.md'
+    - Reducers:
+        - 'overview': 'procs/reduce/reducers/index.md'
+        - 'count': 'procs/reduce/reducers/count.md'
+        - 'date': 'procs/reduce/reducers/date.md'
+        - 'iterate': 'procs/reduce/reducers/iterate.md'
+        - 'math': 'procs/reduce/reducers/math.md'
+        - 'maximum': 'procs/reduce/reducers/maximum.md'
+        - 'minimum': 'procs/reduce/reducers/minimum.md'
     - Sinks:
         - Views:
             - 'overview': 'sinks/views/index.md'
