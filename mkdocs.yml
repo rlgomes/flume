@@ -57,3 +57,7 @@ pages:
         - 'overview': 'sources/index.md'
         - 'emit': 'sources/emit.md'
         - 'read': 'sources/read.md'
+    - Third Party:
+        - 'overview': 'thirdparty/index.md'
+        - 'github': 'thirdparty/github.md'
+        - 'syslog': 'thirdparty/syslog.md'
