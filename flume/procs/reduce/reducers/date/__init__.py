@@ -5,6 +5,7 @@ import inspect
 
 from flume import reducer
 
+
 def strftime(fieldname, fmt):
 
     class strftime_reducer(reducer):
@@ -24,7 +25,6 @@ def strftime(fieldname, fmt):
             self.value = None
 
     return strftime_reducer(fieldname, fmt)
-
 
 class date(object):
 
