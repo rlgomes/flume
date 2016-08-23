@@ -104,11 +104,11 @@ class GnuplotTest(unittest.TestCase):
     @mock.patch('blessings.Terminal')
     @mock.patch('subprocess.Popen')
     @mock.patch('flume.sinks.views.Gnuplot.write')
-    def test_can_call_render_multiple_times_for_a_simple_barchart_with_dumb_terminal(self,
-                                                                                     mock_write,
-                                                                                     mock_popen,
-                                                                                     mock_terminal,
-                                                                                     mock_mkdtemp):
+    def test_can_call_render_n_times_barchart_with_dumb_terminal(self,
+                                                                 mock_write,
+                                                                 mock_popen,
+                                                                 mock_terminal,
+                                                                 mock_mkdtemp):
         mock_mkdtemp.return_value = '/tmp'
         mock_terminal.return_value = Bunch(width=100, height=50)
 

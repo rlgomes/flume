@@ -43,10 +43,10 @@ class HttpTest(unittest.TestCase):
         })
 
         (
-            emit(limit=1)
+            emit(limit=1, start='2016-01-01')
             | write('http',
-                 url='http://localhost:8080/fail',
-                 status=400)
+                    url='http://localhost:8080/fail',
+                    status=400)
         ).execute()
 
     @mock.patch('requests.request')

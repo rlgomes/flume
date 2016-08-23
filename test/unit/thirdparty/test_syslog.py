@@ -26,7 +26,7 @@ class SyslogTest(unittest.TestCase):
         ).execute()
 
         expect(results).to.eq([
-            {'count':  274}
+            {'count':  50}
         ])
 
     def test_syslog_read_syslog_file_directly(self):
@@ -40,7 +40,7 @@ class SyslogTest(unittest.TestCase):
         ).execute()
 
         expect(results).to.eq([
-            {'count':  274}
+            {'count':  50}
         ])
 
     def test_syslog_can_read_compressed_and_not_compressed_syslog_files(self):
@@ -54,7 +54,7 @@ class SyslogTest(unittest.TestCase):
         ).execute()
 
         expect(results).to.eq([
-            {'count':  1200}
+            {'count':  100}
         ])
 
     def test_syslog_can_handle_compressed_direct_logfile(self):
@@ -68,5 +68,5 @@ class SyslogTest(unittest.TestCase):
         ).execute()
 
         expect(results).to.eq([
-            {'count':  926}
+            {'count':  50}
         ])

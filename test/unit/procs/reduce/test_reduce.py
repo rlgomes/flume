@@ -381,22 +381,16 @@ class ReduceTest(unittest.TestCase):
             {'time': '2015-12-01T00:00:00.000Z', 'count': 31},
         ])
 
-    def test_reduce_yearl_day_counts(self):
+    def test_reduce_year_day_counts(self):
         results = []
         (
-            emit(limit=365 * 8 + 2, start='2000-01-01', every='1d')
+            emit(limit=365 * 2 + 1, start='2000-01-01', every='1d')
             | reduce(days=count(), every='1 year')
             | memory(results)
         ).execute()
         expect(results).to.eq([
             {'time': '2000-01-01T00:00:00.000Z', 'days': 366},
-            {'time': '2001-01-01T00:00:00.000Z', 'days': 365},
-            {'time': '2002-01-01T00:00:00.000Z', 'days': 365},
-            {'time': '2003-01-01T00:00:00.000Z', 'days': 365},
-            {'time': '2004-01-01T00:00:00.000Z', 'days': 366},
-            {'time': '2005-01-01T00:00:00.000Z', 'days': 365},
-            {'time': '2006-01-01T00:00:00.000Z', 'days': 365},
-            {'time': '2007-01-01T00:00:00.000Z', 'days': 365}
+            {'time': '2001-01-01T00:00:00.000Z', 'days': 365}
         ])
 
     def test_reduce_with_single_empty_every_interval(self):

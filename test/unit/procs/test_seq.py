@@ -30,8 +30,8 @@ class SeqTest(unittest.TestCase):
     def test_seq_can_chain_two_live_streams(self):
         results = []
         (
-            seq(emit(limit=3, every='0.1s'),
-                emit(limit=3, every='0.1s'))
+            seq(emit(limit=3, every='0.01s'),
+                emit(limit=3, every='0.01s'))
             | reduce(count=count())
             | keep('count')
             | memory(results)
