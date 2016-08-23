@@ -12,5 +12,8 @@ unit: test-install
 install: requirements.txt flume/*
 	python setup.py install
 
+check-examples: examples
+	python -m py_compile `find examples -name '*.py'`
+
 test-install: test-requirements.txt
 	pip install -r test-requirements.txt

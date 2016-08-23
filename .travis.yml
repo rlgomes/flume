@@ -9,6 +9,7 @@ python:
 script:
   - pip install coveralls
   - make coverage
+  - make check-examples
 
 after_success:
   - coveralls
