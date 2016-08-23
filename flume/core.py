@@ -10,6 +10,8 @@ import logging
 import sys
 import threading
 
+from concurrent.futures import ThreadPoolExecutor
+
 import six
 
 from flume import moment
@@ -130,6 +132,7 @@ class node(object):
     name = None
 
     EOF = Point(__eof=True)
+    __POOL = ThreadPoolExecutor(32)
 
     def __init__(self, *args, **kwargs):
         """
@@ -280,27 +283,16 @@ class node(object):
         #      on it shouldn't fail
         if not hasattr(self, 'outputs'):
             node.init_node(self, outputs=[])
-        
+
         logger.setLogLevel(loglevel)
 
-        # XXX: pooling here ?
-        thread = threading.Thread(target=self.run)
-        # Daemonize so that when we Ctrl+C the main program then all underlying
-        # threads are instantly killed. Currently don't have any concern about
-        # cleanly closing resources.
-        thread.daemon = True
-        thread.start()
+        future = node.__POOL.submit(self.run)
 
         if self.parent:
             self.parent.execute(wait=wait, loglevel=loglevel)
 
         if wait:
-            while thread.is_alive():
-                # if you don't join with a timeout then you block the parent
-                # until the child has completely finished and therefore can't
-                # handle any signals in the parent (ie SIGINT)
-                thread.join(1)
-
+            future.result()
             exc_info = self.exc_info.get()
 
             if exc_info is not None:
