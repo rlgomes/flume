@@ -1,9 +1,9 @@
-build
-dist
-env
-site
+/build
+/dist
+/env*
+/site
 *.pyc
-flume.egg-info/
+/flume.egg-info/
 .eggs/
-htmlcov
-.coverage
+/htmlcov
+/.coverage
