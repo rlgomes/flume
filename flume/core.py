@@ -156,7 +156,7 @@ class node(object):
         self.outputs = outputs
         self.parent = parent
 
-    def pull(self, wait=True, timeout=None):
+    def pull(self, wait=True):
         """
         return a batch of points from the upstream procs and guarantee all
         points are sorted in order otherwise

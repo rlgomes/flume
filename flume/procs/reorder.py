@@ -21,12 +21,7 @@ class reorder(node):
         last = None
 
         while self.running:
-            # reorder can't get stuck on a single input because it doesn't
-            # have points if its going to get points in realtime and emit them
-            # so we set the timeout to 1ms and that way we'll be able to process
-            # a set of live inputs and never delay them by more than the `delay`
-            # specified
-            points = self.pull(wait=True, timeout=0.001)
+            points = self.pull(wait=True)
 
             for point in points:
                 # each point is timestamped upon arrival and only emitted
