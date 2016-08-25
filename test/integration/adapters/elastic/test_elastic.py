@@ -377,3 +377,48 @@ class ElasticTest(unittest.TestCase):
             {'time': '2016-01-01T00:00:08.000Z', 'string': 'i', 'integer': 9, 'float': 9.0},
             {'time': '2016-01-01T00:00:09.000Z', 'string': 'j', 'integer': 10, 'float': 10.0}
         ])
+
+    def test_can_write_and_read_timeless_points(self):
+        (
+            emit(limit=3, start='2016-01-01')
+            | put(foo='bar',count=count())
+            | keep('foo', 'count')
+            | write('elastic', index='timeless_test_data')
+        ).execute()
+
+        # elasticsearch commit delay
+        time.sleep(1)
+
+        results = []
+        (
+            read('elastic', index='timeless_test_data', time=None)
+            | memory(results)
+        ).execute()
+
+        expect(results).to.have.length(3)
+        expect(results).to.contain({'foo': 'bar', 'count': 1})
+        expect(results).to.contain({'foo': 'bar', 'count': 2})
+        expect(results).to.contain({'foo': 'bar', 'count': 3})
+
+    def test_can_write_and_read_points_with_different_time_field(self):
+        (
+            emit(limit=3, start='2016-01-01')
+            | put(foo='bar', count=count(), created_at='{time}')
+            | keep('foo', 'count', 'created_at')
+            | write('elastic', index='created_at_test_data')
+        ).execute()
+
+        # elasticsearch commit delay
+        time.sleep(1)
+
+        results = []
+        (
+            read('elastic', index='created_at_test_data', time='created_at')
+            | memory(results)
+        ).execute()
+
+        expect(results).to.eq([
+            {'time': '2016-01-01T00:00:00.000Z', 'foo': 'bar', 'count': 1},
+            {'time': '2016-01-01T00:00:01.000Z', 'foo': 'bar', 'count': 2},
+            {'time': '2016-01-01T00:00:02.000Z', 'foo': 'bar', 'count': 3}
+        ])

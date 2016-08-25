@@ -45,6 +45,7 @@ class http(adapter):
 
 
     def __init__(self,
+                 time=None,
                  url=None,
                  method='GET',
                  headers=None,
@@ -54,6 +55,7 @@ class http(adapter):
                  array=True,
                  status=[200],
                  **kwargs):
+        self.time = time
         self.url = url
         self.method = method
         self.headers = headers
@@ -106,7 +108,7 @@ class http(adapter):
                 point = Point(**point)
                 points.append(point)
 
-            yield points
+            yield self.process_time_field(points, self.time)
 
             if not self.follow_link:
                 break

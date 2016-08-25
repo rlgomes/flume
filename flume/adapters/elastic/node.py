@@ -3,8 +3,10 @@ elastic adapter core module
 """
 
 import json
+import re
 
 from elasticsearch import Elasticsearch, helpers
+from elasticsearch.exceptions import RequestError
 
 from flume import logger, moment
 from flume.adapters.adapter import adapter
@@ -21,12 +23,14 @@ class elastic(adapter):
     name = 'elastic'
 
     def __init__(self,
+                 time='time',
                  index='_all',
                  type='metric',
                  host='localhost',
                  port=9200,
                  filter=None,
                  batch=1024):
+        self.time = time
         self.index = index
         self.type = type
         self.host = host
@@ -53,22 +57,45 @@ class elastic(adapter):
         points = []
         client = self._get_elasticsearch(self.host, self.port)
 
-        query = filter_to_es_query(self.filter)
+        query = {
+            'query': filter_to_es_query(self.filter)
+        }
+
+        if self.time is not None:
+            query['sort'] = [self.time]
+
         logger.debug('es query %s' % json.dumps(query))
 
-        for result in helpers.scan(client,
-                                   index=self.index,
-                                   query={'query': query, 'sort': ['time']},
-                                   preserve_order=True):
-            point = Point(**result['_source'])
-            points.append(point)
+        try:
+            for result in helpers.scan(client,
+                                       index=self.index,
+                                       query=query,
+                                       preserve_order=True):
+                point = Point(**result['_source'])
+                points.append(point)
 
-            if len(points) > self.batch:
-                yield points
-                points = []
+                if len(points) >= self.batch:
+                    yield self.process_time_field(points, self.time)
+                    points = []
 
-        if len(points) > 0:
-            yield points
+            if len(points) > 0:
+                yield self.process_time_field(points, self.time)
+
+        except RequestError as exception:
+            # make time field related errors a little easier to digest instead
+            # of spewing the elasticsearch internal error which is a little less
+            # human friendly
+            error_type = exception.info['error']['type']
+            if error_type == 'search_phase_execution_exception':
+                reason = exception.info['error']['root_cause'][0]['reason']
+                if re.match('No mapping found for .* in order to sort on',
+                            reason):
+                    raise FlumineException(
+                        ('Time field "%s" not found in data, set time to ' +
+                         'the appropriate value or None to query timeless ' +
+                         'data') % self.time)
+
+            raise
 
     def write(self, points):
         """
