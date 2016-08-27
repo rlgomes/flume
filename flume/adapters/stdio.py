@@ -3,6 +3,7 @@ stdio adapter
 """
 import codecs
 import re
+import six
 import sys
 import zlib
 
@@ -10,7 +11,6 @@ from flume.adapters.adapter import adapter
 from flume.adapters import streamers
 from flume.exceptions import FlumineException
 from flume.point import Point
-from flume import util
 
 # For things to work in Python 3
 # from: http://python-notes.curiousefficiency.org/en/latest/python3/text_file_processing.html#unicode-basics
@@ -68,7 +68,7 @@ class InputStream(object):
             data = ''
 
         if self.decompressor is not None:
-            if util.IS_PY2:
+            if six.PY2:
                 data = self.decompressor.decompress(data)
 
             else:
@@ -142,7 +142,7 @@ class OutputStream(object):
 
     def write(self, data):
         if self.compressor is not None:
-            if util.IS_PY2:
+            if six.PY2:
                 data = self.compressor.compress(data)
 
             else:
@@ -153,7 +153,7 @@ class OutputStream(object):
 
     def flush(self):
         if self.compressor is not None:
-            if util.IS_PY2:
+            if six.PY2:
                 data = self.compressor.flush()
                 self.stream.write(data)
 
@@ -182,12 +182,14 @@ class stdio(adapter):
     stdin = sys.stdin
 
     def __init__(self,
+                 time=None,
                  format='jsonl',
                  file=None,
                  append=False,
                  strip_ansi=False,
                  compression=None,
                  **kwargs):
+        self.time = time
         self.streamer = streamers.get_streamer(format, **kwargs)
         self.file = file
         self.append = append
@@ -203,10 +205,10 @@ class stdio(adapter):
                                        compression=self.compression)
 
             for point in self.streamer.read(input_stream):
-                yield [Point(**point)]
+                yield self.process_time_field([Point(**point)], self.time)
 
         else:
-            if util.IS_PY2:
+            if six.PY2:
                 encoding = None
 
             else:
@@ -218,7 +220,7 @@ class stdio(adapter):
                                      compression=self.compression)
 
                 for point in self.streamer.read(stream):
-                    yield [Point(**point)]
+                    yield self.process_time_field([Point(**point)], self.time)
 
     def write(self, points):
         if self.output is None:
@@ -232,7 +234,7 @@ class stdio(adapter):
                 else:
                     mode = 'w'
 
-                if util.IS_PY2:
+                if six.PY2:
                     encoding = None
 
                 else:

@@ -8,7 +8,7 @@ from flume.adapters.elastic.query import filter_to_es_query
 from flume.exceptions import FlumineException
 
 
-class ElasticTest(unittest.TestCase):
+class ElasticQueryTest(unittest.TestCase):
 
     def test_default_filter_is_match_all(self):
         expect(filter_to_es_query(None)).to.eq({
@@ -130,3 +130,69 @@ class ElasticTest(unittest.TestCase):
                 }
             }
         })
+
+    def test_single_integer_lt_query(self):
+        expect(filter_to_es_query('foo < 3')).to.eq({
+            'constant_score': {
+                'filter': {
+                    'range': {
+                        'foo':  {
+                            'lt': 3
+                        }
+                    }
+                }
+            }
+        })
+
+    def test_single_integer_lte_query(self):
+        expect(filter_to_es_query('foo <= 3')).to.eq({
+            'constant_score': {
+                'filter': {
+                    'range': {
+                        'foo':  {
+                            'lte': 3
+                        }
+                    }
+                }
+            }
+        })
+
+    def test_single_integer_gt_query(self):
+        expect(filter_to_es_query('foo > 3')).to.eq({
+            'constant_score': {
+                'filter': {
+                    'range': {
+                        'foo':  {
+                            'gt': 3
+                        }
+                    }
+                }
+            }
+        })
+
+    def test_single_integer_gte_query(self):
+        expect(filter_to_es_query('foo >= 3')).to.eq({
+            'constant_score': {
+                'filter': {
+                    'range': {
+                        'foo':  {
+                            'gte': 3
+                        }
+                    }
+                }
+            }
+        })
+
+    def test_not_operator_on_eq_query(self):
+        expect(filter_to_es_query('not(foo=="bar")')).to.eq({
+            'constant_score': {
+                'filter': {
+                    'bool': {
+                        'must_not': {
+                            'term': {'foo': 'bar'}
+                        }
+                    }
+                }
+            }
+        })
+
