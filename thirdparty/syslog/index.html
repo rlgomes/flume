@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>intersect - Flume</title>
+	<title>syslog - Flume</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.5.0.css" rel="stylesheet">
@@ -175,79 +175,79 @@
         
             
 <li >
-    <a href="../">overview</a>
+    <a href="../../procs/">overview</a>
 </li>
 
         
             
 <li >
-    <a href="../diff/">diff</a>
+    <a href="../../procs/diff/">diff</a>
 </li>
 
         
             
 <li >
-    <a href="../filter/">filter</a>
+    <a href="../../procs/filter/">filter</a>
 </li>
 
         
             
 <li >
-    <a href="../head/">head</a>
-</li>
-
-        
-            
-<li class="active">
-    <a href="./">intersect</a>
+    <a href="../../procs/head/">head</a>
 </li>
 
         
             
 <li >
-    <a href="../keep/">keep</a>
+    <a href="../../procs/intersect/">intersect</a>
 </li>
 
         
             
 <li >
-    <a href="../put/">put</a>
+    <a href="../../procs/keep/">keep</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/">reduce</a>
+    <a href="../../procs/put/">put</a>
 </li>
 
         
             
 <li >
-    <a href="../remove/">remove</a>
+    <a href="../../procs/reduce/">reduce</a>
 </li>
 
         
             
 <li >
-    <a href="../seq/">seq</a>
+    <a href="../../procs/remove/">remove</a>
 </li>
 
         
             
 <li >
-    <a href="../sort/">sort</a>
+    <a href="../../procs/seq/">seq</a>
 </li>
 
         
             
 <li >
-    <a href="../tail/">tail</a>
+    <a href="../../procs/sort/">sort</a>
 </li>
 
         
             
 <li >
-    <a href="../union/">union</a>
+    <a href="../../procs/tail/">tail</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../procs/union/">union</a>
 </li>
 
         
@@ -262,43 +262,43 @@
         
             
 <li >
-    <a href="../reduce/reducers/">overview</a>
+    <a href="../../procs/reduce/reducers/">overview</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/count/">count</a>
+    <a href="../../procs/reduce/reducers/count/">count</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/date/">date</a>
+    <a href="../../procs/reduce/reducers/date/">date</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/iterate/">iterate</a>
+    <a href="../../procs/reduce/reducers/iterate/">iterate</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/math/">math</a>
+    <a href="../../procs/reduce/reducers/math/">math</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/maximum/">maximum</a>
+    <a href="../../procs/reduce/reducers/maximum/">maximum</a>
 </li>
 
         
             
 <li >
-    <a href="../reduce/reducers/minimum/">minimum</a>
+    <a href="../../procs/reduce/reducers/minimum/">minimum</a>
 </li>
 
         
@@ -412,19 +412,19 @@
         
             
 <li >
-    <a href="../../thirdparty/">overview</a>
+    <a href="../">overview</a>
 </li>
 
         
             
 <li >
-    <a href="../../thirdparty/github/">github</a>
+    <a href="../github/">github</a>
 </li>
 
         
             
-<li >
-    <a href="../../thirdparty/syslog/">syslog</a>
+<li class="active">
+    <a href="./">syslog</a>
 </li>
 
         
@@ -457,22 +457,23 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#intersect">intersect</a></li>
+        <li class="main active"><a href="#syslog">syslog</a></li>
         
-    
-        <li class="main "><a href="#intersecting-two-streams">intersecting two streams</a></li>
+            <li><a href="#syslog-source">syslog source</a></li>
+        
+            <li><a href="#calculate-syslog-lines-per-day">calculate syslog lines per day</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="intersect">intersect</h1>
-<p>The <code>intersect</code> proc is part of the set operators that can be used to join two
-streams back into one but applying some set operator to the items of the
-stream. In this case only allow points that appear in both streams to pass.</p>
-<pre><code class="python">...
-( ... , ....) | intersect(*fieldnames) | ...
+<h1 id="syslog">syslog</h1>
+<p>A collection of syslog utilities that make reading from syslog a whole lot
+easier.</p>
+<h2 id="syslog-source">syslog source</h2>
+<pre><code class="python">syslog(logfile=None,
+       path='/var/log/') | ...
 </code></pre>
 
 <table>
@@ -485,34 +486,62 @@ stream. In this case only allow points that appear in both streams to pass.</p>
 </thead>
 <tbody>
 <tr>
-<td>*fieldnames</td>
-<td>list or tuple of field names to calculate the intersect on</td>
-<td>No, default: <code>time</code></td>
+<td>logfile</td>
+<td>the name of the exact syslog file to read (ie /var/log/syslog.7.gz</td>
+<td>No, default: <code>None</code></td>
+</tr>
+<tr>
+<td>path</td>
+<td>the path where the syslog files are located (including gzipped ones)</td>
+<td>No, default: <code>/var/log/</code></td>
 </tr>
 </tbody>
 </table>
-<h1 id="intersecting-two-streams">intersecting two streams</h1>
-<pre><code class="python">from flume import *
-
-(
-    (emit(points=[
-        {'time': '2010-01-01T00:00:00.000Z', 'a': 0},
-        {'time': '2010-01-01T00:01:00.000Z', 'a': 1},
-        {'time': '2010-01-01T00:02:00.000Z', 'a': 2}
-    ]),
-    emit(points=[
-        {'time': '2010-01-01T00:01:00.000Z', 'a': 1},
-        {'time': '2010-01-01T00:02:00.000Z', 'a': 2},
-        {'time': '2010-01-01T00:05:00.000Z', 'a': 3}
-    ]))
-    | intersect()
-    | write('stdio')
-).execute()
+<p>When you don't set the <code>logfile</code> we end up figuring out what syslog files are
+there and reading through all in order and also handling compression along the
+way for the older syslog files that were rotated and compressed.</p>
+<h2 id="calculate-syslog-lines-per-day">calculate syslog lines per day</h2>
+<pre><code class="bash">flume &quot;syslog() | reduce(count=count(), every='1 day') | write('stdio')&quot;
 </code></pre>
 
-<p>The above would produce the output:</p>
-<pre><code class="json">{&quot;a&quot;: 1, &quot;time&quot;: &quot;2010-01-01T00:01:00.000Z&quot;}
-{&quot;a&quot;: 2, &quot;time&quot;: &quot;2010-01-01T00:02:00.000Z&quot;}
+<p><strong>example output:</strong></p>
+<pre><code class="bash">&gt; flume &quot;syslog() | reduce(count=count(), every='1 day') | write('stdio')&quot;
+{&quot;count&quot;: 1440, &quot;time&quot;: &quot;2016-08-08T08:50:46.000Z&quot;}
+{&quot;count&quot;: 2133, &quot;time&quot;: &quot;2016-08-09T08:50:46.000Z&quot;}
+{&quot;count&quot;: 1166, &quot;time&quot;: &quot;2016-08-10T08:50:46.000Z&quot;}
+{&quot;count&quot;: 2034, &quot;time&quot;: &quot;2016-08-11T08:50:46.000Z&quot;}
+{&quot;count&quot;: 2197, &quot;time&quot;: &quot;2016-08-12T08:50:46.000Z&quot;}
+{&quot;count&quot;: 1409, &quot;time&quot;: &quot;2016-08-13T08:50:46.000Z&quot;}
+{&quot;count&quot;: 644, &quot;time&quot;: &quot;2016-08-14T08:50:46.000Z&quot;}
+{&quot;count&quot;: 2763, &quot;time&quot;: &quot;2016-08-15T08:50:46.000Z&quot;}
+</code></pre>
+
+<p>Or on a <a href="../../sinks/barchart/">barchart</a> using <a href="../../sinks/views/gnuplot/">gnuplot</a>:</p>
+<pre><code class="bash">flume &quot;syslog() | reduce(value=count(), every='1 day', name='syslog lines', time=date.strftime('time', '%Y-%m-%d')) | barchart('gnuplot')&quot;
+</code></pre>
+
+<p>Which produces for the syslog data on my system:</p>
+<pre><code class="bash">     +----+----------+-----------+----------+-----------+----------+--------+-----------+-----+
+     |    +          +           +          +           +          +        +   syslog lines  |
+     |                                                                                        |
+3000 ++                                                                                      ++
+     |                                                                               ******   |
+2500 ++                                                                              *    *  ++
+     |                                                                               *    *   |
+     |             ******                            ******                          *    *   |
+2000 ++            *    *                 ******     *    *                          *    *  ++
+     |             *    *                 *    *     *    *                          *    *   |
+     |             *    *                 *    *     *    *                          *    *   |
+1500 ++ ******     *    *                 *    *     *    *     ******               *    *  ++
+     |  *    *     *    *                 *    *     *    *     *    *               *    *   |
+     |  *    *     *    *      ******     *    *     *    *     *    *               *    *   |
+1000 ++ *    *     *    *      *    *     *    *     *    *     *    *               *    *  ++
+     |  *    *     *    *      *    *     *    *     *    *     *    *     ******    *    *   |
+ 500 ++ *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *  ++
+     |  *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *   |
+     |  * +  *     * +  *      * +  *     * +  *     *  + *     *  + *     *  + *    *  + *   |
+   0 ++-******-----******------******-----******-----******-----******-----******----******--++
+       2016-08-08 2016-08-10 2016-08-11 2016-08-12 2016-08-13 2016-08-14 2016-08-14 2016-08-15
 </code></pre></div>
             
         </div>

@@ -426,86 +426,6 @@
             "title": "count days in each month"
         }, 
         {
-            "location": "/procs/reduce/reducers/", 
-            "text": "reducers\n\n\nreducers are responsible for handling a small piece of computing a value over a\nset of points. The way this works is that the reducer will receive individual\nupdate calls with each point that makes it to the \nreduce\n\n/\nput\n.\n\n\nbuilt-in\n\n\n\n\ncount\n \n\n\niterate\n \n\n\nmaximum\n \n\n\nminimum\n \n\n\n\n\nwrite your own\n\n\nWriting your own reducer is an easy task and should be a common one for various\nreducers not yet part of the core \nflume\n project. To write one you simply\nextend from the \nflume.reducer\n class and implement the following methods:\n\n\n\n\n__init__(self, ...)\n make sure to use the constructor to handle passing\n                            in the field names from the points that you will \n                            be manipulating.\n\n\n\n\nupdate(self, point)\n this is called for every point that makes it into\n                            the current interval of reduction. You should use\n                            the names of the fields you stored previously in \n                            the constructor to compute the value you wanted.\n\n\n\n\n\n\nresult(self)\n should return the current value of the reduction being\n                     calculated. This means that if you're just counting \n                     the appearance of a field you'd return the current count.\n\n\n\n\n\n\nreset(self)\n reset is called at the end of \nevery\n interval as defined\n                    in the call to the \nreduce\n proc.", 
-            "title": "overview"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/#reducers", 
-            "text": "reducers are responsible for handling a small piece of computing a value over a\nset of points. The way this works is that the reducer will receive individual\nupdate calls with each point that makes it to the  reduce \n/ put .", 
-            "title": "reducers"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/#built-in", 
-            "text": "count    iterate    maximum    minimum", 
-            "title": "built-in"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/#write-your-own", 
-            "text": "Writing your own reducer is an easy task and should be a common one for various\nreducers not yet part of the core  flume  project. To write one you simply\nextend from the  flume.reducer  class and implement the following methods:   __init__(self, ...)  make sure to use the constructor to handle passing\n                            in the field names from the points that you will \n                            be manipulating.   update(self, point)  this is called for every point that makes it into\n                            the current interval of reduction. You should use\n                            the names of the fields you stored previously in \n                            the constructor to compute the value you wanted.    result(self)  should return the current value of the reduction being\n                     calculated. This means that if you're just counting \n                     the appearance of a field you'd return the current count.    reset(self)  reset is called at the end of  every  interval as defined\n                    in the call to the  reduce  proc.", 
-            "title": "write your own"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/count/", 
-            "text": "count\n\n\nThe \ncount\n reducer simply counts the number of points that have passed\nthrough this point in the pipeline.\n\n\ncounting points\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | reduce(count=count())\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\ncount\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
-            "title": "count"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/count/#count", 
-            "text": "The  count  reducer simply counts the number of points that have passed\nthrough this point in the pipeline.", 
-            "title": "count"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/count/#counting-points", 
-            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | reduce(count=count())\n    | write('stdio')\n).execute()  The above would produce the output:  { count : 10,  time :  2015-01-01T00:00:00.000Z }", 
-            "title": "counting points"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/iterate/", 
-            "text": "iterate\n\n\nThe \niterate\n reducer will iterate through the values in the list it was given\nand cycle through those as to \"decorate\" your data with values from that list.\n\n\nlabeling points\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(label=iterate(['a','b','c']))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\ntime\n: \n2015-01-01T00:00:00.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:01.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:02.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:03.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:04.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:05.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:06.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:07.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:08.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:09.000Z\n, \nlabel\n: \na\n}", 
-            "title": "iterate"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/iterate/#iterate", 
-            "text": "The  iterate  reducer will iterate through the values in the list it was given\nand cycle through those as to \"decorate\" your data with values from that list.", 
-            "title": "iterate"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/iterate/#labeling-points", 
-            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(label=iterate(['a','b','c']))\n    | write('stdio')\n).execute()  The above would produce the output:  { time :  2015-01-01T00:00:00.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:01.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:02.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:03.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:04.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:05.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:06.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:07.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:08.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:09.000Z ,  label :  a }", 
-            "title": "labeling points"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/maximum/", 
-            "text": "maximum\n\n\nThe \nmaximum\n reducer picks the maximum value of the field provided during the\nreduction interval.\n\n\nmaximum value for a field\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(maximum=maximum('count'))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\nmaximum\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
-            "title": "maximum"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/maximum/#maximum", 
-            "text": "The  maximum  reducer picks the maximum value of the field provided during the\nreduction interval.", 
-            "title": "maximum"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/maximum/#maximum-value-for-a-field", 
-            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(maximum=maximum('count'))\n    | write('stdio')\n).execute()  The above would produce the output:  { maximum : 10,  time :  2015-01-01T00:00:00.000Z }", 
-            "title": "maximum value for a field"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/minimum/", 
-            "text": "minimum\n\n\nThe \nminimum\n reducer picks the maximum value of the field provided during the\nreduction interval.\n\n\nminimum value for a field\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(minimum=maximum('count'))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\nminimum\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
-            "title": "minimum"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/minimum/#minimum", 
-            "text": "The  minimum  reducer picks the maximum value of the field provided during the\nreduction interval.", 
-            "title": "minimum"
-        }, 
-        {
-            "location": "/procs/reduce/reducers/minimum/#minimum-value-for-a-field", 
-            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(minimum=maximum('count'))\n    | write('stdio')\n).execute()  The above would produce the output:  { minimum : 10,  time :  2015-01-01T00:00:00.000Z }", 
-            "title": "minimum value for a field"
-        }, 
-        {
             "location": "/procs/remove/", 
             "text": "remove\n\n\nThe \nremove\n proc is used to remove only the field names specified from every\npoint in the stream.\n\n\n...  | remove(*fieldnames) | ...\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\n*fieldnames\n\n\nlist of field names to remove in each point\n\n\nNo, default: \nNone\n\n\n\n\n\n\n\n\nremove just the time field\n\n\nfrom flume import *\n\n(\n    emit(limit=5)\n    | put(count=count())\n    | remove('time')\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\ncount\n: 1}\n{\ncount\n: 2}\n{\ncount\n: 3}\n{\ncount\n: 4}\n{\ncount\n: 5}", 
             "title": "remove"
@@ -579,6 +499,156 @@
             "location": "/procs/union/#unioning-two-streams", 
             "text": "from flume import *\n\n(\n    (emit(points=[\n        {'time': '2010-01-01T00:00:00.000Z', 'a': 0},\n        {'time': '2010-01-01T00:01:00.000Z', 'a': 1},\n        {'time': '2010-01-01T00:02:00.000Z', 'a': 2}\n    ]),\n    emit(points=[\n        {'time': '2010-01-01T00:01:00.000Z', 'a': 1},\n        {'time': '2010-01-01T00:02:00.000Z', 'a': 2},\n        {'time': '2010-01-01T00:05:00.000Z', 'a': 3}\n    ]))\n    | union()\n    | write('stdio')\n).execute()  The above would produce the output:  { a : 0,  time :  2010-01-01T00:00:00.000Z }\n{ a : 1,  time :  2010-01-01T00:01:00.000Z }\n{ a : 2,  time :  2010-01-01T00:02:00.000Z }\n{ a : 3,  time :  2010-01-01T00:05:00.000Z }", 
             "title": "unioning two streams"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/", 
+            "text": "reducers\n\n\nreducers are responsible for handling a small piece of computing a value over a\nset of points. The way this works is that the reducer will receive individual\nupdate calls with each point that makes it to the \nreduce\n\n/\nput\n.\n\n\nbuilt-in\n\n\n\n\ncount\n \n\n\niterate\n \n\n\nmaximum\n \n\n\nminimum\n \n\n\n\n\nwrite your own\n\n\nWriting your own reducer is an easy task and should be a common one for various\nreducers not yet part of the core \nflume\n project. To write one you simply\nextend from the \nflume.reducer\n class and implement the following methods:\n\n\n\n\n__init__(self, ...)\n make sure to use the constructor to handle passing\n                            in the field names from the points that you will \n                            be manipulating.\n\n\n\n\nupdate(self, point)\n this is called for every point that makes it into\n                            the current interval of reduction. You should use\n                            the names of the fields you stored previously in \n                            the constructor to compute the value you wanted.\n\n\n\n\n\n\nresult(self)\n should return the current value of the reduction being\n                     calculated. This means that if you're just counting \n                     the appearance of a field you'd return the current count.\n\n\n\n\n\n\nreset(self)\n reset is called at the end of \nevery\n interval as defined\n                    in the call to the \nreduce\n proc.", 
+            "title": "overview"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/#reducers", 
+            "text": "reducers are responsible for handling a small piece of computing a value over a\nset of points. The way this works is that the reducer will receive individual\nupdate calls with each point that makes it to the  reduce \n/ put .", 
+            "title": "reducers"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/#built-in", 
+            "text": "count    iterate    maximum    minimum", 
+            "title": "built-in"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/#write-your-own", 
+            "text": "Writing your own reducer is an easy task and should be a common one for various\nreducers not yet part of the core  flume  project. To write one you simply\nextend from the  flume.reducer  class and implement the following methods:   __init__(self, ...)  make sure to use the constructor to handle passing\n                            in the field names from the points that you will \n                            be manipulating.   update(self, point)  this is called for every point that makes it into\n                            the current interval of reduction. You should use\n                            the names of the fields you stored previously in \n                            the constructor to compute the value you wanted.    result(self)  should return the current value of the reduction being\n                     calculated. This means that if you're just counting \n                     the appearance of a field you'd return the current count.    reset(self)  reset is called at the end of  every  interval as defined\n                    in the call to the  reduce  proc.", 
+            "title": "write your own"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/count/", 
+            "text": "count\n\n\nThe \ncount\n reducer simply counts the number of points that have passed\nthrough this point in the pipeline.\n\n\ncounting points\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | reduce(count=count())\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\ncount\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
+            "title": "count"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/count/#count", 
+            "text": "The  count  reducer simply counts the number of points that have passed\nthrough this point in the pipeline.", 
+            "title": "count"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/count/#counting-points", 
+            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | reduce(count=count())\n    | write('stdio')\n).execute()  The above would produce the output:  { count : 10,  time :  2015-01-01T00:00:00.000Z }", 
+            "title": "counting points"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/", 
+            "text": "date\n\n\nThe \ndate\n reducers can be used to easily extract information from existing\ndatetime fields such as the \ntime\n field. You'll see below how to use each one.\n\n\n.year\n\n\n... | reduce(year=date.year('time')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the string that represents the year, such\nas \n2016\n, \n1975\n, etc. Can be used both in the \nput\n and\n\nreduce\n processors.\n\n\n.fullmonth\n\n\n... | reduce(fullmonth=date.fullmonth('time')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the string that represents the full\nmonth, such as \nJanuary\n, \nDecember\n, etc. Can be used both in the \nput\n and\n\nreduce\n processors.\n\n\n.month\n\n\n... | reduce(month=date.month('time')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the string that represents the abreviated\nmonth, such as \nJan\n, \nDec\n, etc. Can be used both in the \nput\n and\n\nreduce\n processors.\n\n\n.fullweekday\n\n\n... | reduce(fullweekday=date.fullweekday('time')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the string that represents the full\nweekday, such as \nTuesday\n, \nSunday\n, etc. Can be used both in the\n\nput\n and \nreduce\n processors.\n\n\n.weekday\n\n\n... | reduce(weekday=date.weekday('time')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the string that represents the abreviated\nweekday, such as \nTue\n, \nSun\n, etc. Can be used both in the \nput\n\nand \nreduce\n processors.\n\n\n.strftime\n\n\n... | reduce(shortdate=date.strftime('time', '%Y/%m/%d')) | ...\n\n\n\n\nConverts a \ndatetime\n field value into the format specified using python's\n\nstrftime\n format from \nhere\n \nCan be used both in the \nput\n and \nreduce\n processors.", 
+            "title": "date"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#date", 
+            "text": "The  date  reducers can be used to easily extract information from existing\ndatetime fields such as the  time  field. You'll see below how to use each one.", 
+            "title": "date"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#year", 
+            "text": "... | reduce(year=date.year('time')) | ...  Converts a  datetime  field value into the string that represents the year, such\nas  2016 ,  1975 , etc. Can be used both in the  put  and reduce  processors.", 
+            "title": ".year"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#fullmonth", 
+            "text": "... | reduce(fullmonth=date.fullmonth('time')) | ...  Converts a  datetime  field value into the string that represents the full\nmonth, such as  January ,  December , etc. Can be used both in the  put  and reduce  processors.", 
+            "title": ".fullmonth"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#month", 
+            "text": "... | reduce(month=date.month('time')) | ...  Converts a  datetime  field value into the string that represents the abreviated\nmonth, such as  Jan ,  Dec , etc. Can be used both in the  put  and reduce  processors.", 
+            "title": ".month"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#fullweekday", 
+            "text": "... | reduce(fullweekday=date.fullweekday('time')) | ...  Converts a  datetime  field value into the string that represents the full\nweekday, such as  Tuesday ,  Sunday , etc. Can be used both in the put  and  reduce  processors.", 
+            "title": ".fullweekday"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#weekday", 
+            "text": "... | reduce(weekday=date.weekday('time')) | ...  Converts a  datetime  field value into the string that represents the abreviated\nweekday, such as  Tue ,  Sun , etc. Can be used both in the  put \nand  reduce  processors.", 
+            "title": ".weekday"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/date/#strftime", 
+            "text": "... | reduce(shortdate=date.strftime('time', '%Y/%m/%d')) | ...  Converts a  datetime  field value into the format specified using python's strftime  format from  here  \nCan be used both in the  put  and  reduce  processors.", 
+            "title": ".strftime"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/iterate/", 
+            "text": "iterate\n\n\nThe \niterate\n reducer will iterate through the values in the list it was given\nand cycle through those as to \"decorate\" your data with values from that list.\n\n\nlabeling points\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(label=iterate(['a','b','c']))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\ntime\n: \n2015-01-01T00:00:00.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:01.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:02.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:03.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:04.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:05.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:06.000Z\n, \nlabel\n: \na\n}\n{\ntime\n: \n2015-01-01T00:00:07.000Z\n, \nlabel\n: \nb\n}\n{\ntime\n: \n2015-01-01T00:00:08.000Z\n, \nlabel\n: \nc\n}\n{\ntime\n: \n2015-01-01T00:00:09.000Z\n, \nlabel\n: \na\n}", 
+            "title": "iterate"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/iterate/#iterate", 
+            "text": "The  iterate  reducer will iterate through the values in the list it was given\nand cycle through those as to \"decorate\" your data with values from that list.", 
+            "title": "iterate"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/iterate/#labeling-points", 
+            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(label=iterate(['a','b','c']))\n    | write('stdio')\n).execute()  The above would produce the output:  { time :  2015-01-01T00:00:00.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:01.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:02.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:03.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:04.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:05.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:06.000Z ,  label :  a }\n{ time :  2015-01-01T00:00:07.000Z ,  label :  b }\n{ time :  2015-01-01T00:00:08.000Z ,  label :  c }\n{ time :  2015-01-01T00:00:09.000Z ,  label :  a }", 
+            "title": "labeling points"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/", 
+            "text": "math\n\n\nThe \nmath\n reducers exposed are the following set of functions from the math \nmodule in python that can be applied against any of the fields in your \nflume\n\nstream. Mostly we exposed the python \nmath\n module from\n\nhere\n.\n\n\nnumber-theoretic and representation functions\n\n\n\n\nmath.ceil(fieldname)\n\n\nmath.fabs(fieldname)\n\n\nmath.floor(fieldname)\n\n\nmath.factorial(fieldname)\n\n\nmath.fmod(fieldname)\n\n\nmath.trunc(fieldname)\n\n\nmath.isinf(fieldname)\n\n\nmath.isnan(fieldname)\n\n\n\n\npower and logarithmic functions\n\n\n\n\nmath.exp(fieldname)\n\n\nmath.expm1(fieldname)\n\n\nmath.log(fieldname)\n\n\nmath.log1p(fieldname)\n\n\nmath.log10(fieldname)\n\n\nmath.pow(fieldname, power)\n\n\nmath.sqrt(fieldname)\n\n\n\n\ntrigonometric functions\n\n\n\n\nmath.acos(fieldname)\n\n\nmath.asin(fieldname)\n\n\nmath.atan(fieldname)\n\n\nmath.atan2(fieldname)\n\n\nmath.cos(fieldname)\n\n\nmath.sin(fieldname)\n\n\nmath.tan(fieldname)\n\n\n\n\nangular conversion\n\n\n\n\nmath.degrees(fieldname)\n\n\nmath.radians(fieldname)", 
+            "title": "math"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/#math", 
+            "text": "The  math  reducers exposed are the following set of functions from the math \nmodule in python that can be applied against any of the fields in your  flume \nstream. Mostly we exposed the python  math  module from here .", 
+            "title": "math"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/#number-theoretic-and-representation-functions", 
+            "text": "math.ceil(fieldname)  math.fabs(fieldname)  math.floor(fieldname)  math.factorial(fieldname)  math.fmod(fieldname)  math.trunc(fieldname)  math.isinf(fieldname)  math.isnan(fieldname)", 
+            "title": "number-theoretic and representation functions"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/#power-and-logarithmic-functions", 
+            "text": "math.exp(fieldname)  math.expm1(fieldname)  math.log(fieldname)  math.log1p(fieldname)  math.log10(fieldname)  math.pow(fieldname, power)  math.sqrt(fieldname)", 
+            "title": "power and logarithmic functions"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/#trigonometric-functions", 
+            "text": "math.acos(fieldname)  math.asin(fieldname)  math.atan(fieldname)  math.atan2(fieldname)  math.cos(fieldname)  math.sin(fieldname)  math.tan(fieldname)", 
+            "title": "trigonometric functions"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/math/#angular-conversion", 
+            "text": "math.degrees(fieldname)  math.radians(fieldname)", 
+            "title": "angular conversion"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/maximum/", 
+            "text": "maximum\n\n\nThe \nmaximum\n reducer picks the maximum value of the field provided during the\nreduction interval.\n\n\nmaximum value for a field\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(maximum=maximum('count'))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\nmaximum\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
+            "title": "maximum"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/maximum/#maximum", 
+            "text": "The  maximum  reducer picks the maximum value of the field provided during the\nreduction interval.", 
+            "title": "maximum"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/maximum/#maximum-value-for-a-field", 
+            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(maximum=maximum('count'))\n    | write('stdio')\n).execute()  The above would produce the output:  { maximum : 10,  time :  2015-01-01T00:00:00.000Z }", 
+            "title": "maximum value for a field"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/minimum/", 
+            "text": "minimum\n\n\nThe \nminimum\n reducer picks the maximum value of the field provided during the\nreduction interval.\n\n\nminimum value for a field\n\n\nfrom flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(minimum=maximum('count'))\n    | write('stdio')\n).execute()\n\n\n\n\nThe above would produce the output:\n\n\n{\nminimum\n: 10, \ntime\n: \n2015-01-01T00:00:00.000Z\n}", 
+            "title": "minimum"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/minimum/#minimum", 
+            "text": "The  minimum  reducer picks the maximum value of the field provided during the\nreduction interval.", 
+            "title": "minimum"
+        }, 
+        {
+            "location": "/procs/reduce/reducers/minimum/#minimum-value-for-a-field", 
+            "text": "from flume import *\n\n(\n    emit(limit=10, start='2015-01-01')\n    | put(count=count())\n    | reduce(minimum=maximum('count'))\n    | write('stdio')\n).execute()  The above would produce the output:  { minimum : 10,  time :  2015-01-01T00:00:00.000Z }", 
+            "title": "minimum value for a field"
         }, 
         {
             "location": "/sinks/views/", 
@@ -729,6 +799,86 @@
             "location": "/sources/read/#read", 
             "text": "The  read  source is responsible for handling points between adapters  and the rest of the  flume  pipeline. The main\nreason this model is that the  read  source can handle some of the common\ntasks that adapters would otherwise have to implement themselves.  read(adapter,\n     time='time') | ...     Argument  Description  Required?      adapter  the name of the  adapter  to read from  Yes, default:  None    time  the name of the field that contains the  time  value  No, default:  time", 
             "title": "read"
+        }, 
+        {
+            "location": "/thirdparty/", 
+            "text": "third party\n\n\nThe third party package holds a few helpers to make using \nflume\n much easier\nby packaging up things into easy to use \nsources\n,\n\nsinks\n, \nreducers\n, etc.", 
+            "title": "overview"
+        }, 
+        {
+            "location": "/thirdparty/#third-party", 
+            "text": "The third party package holds a few helpers to make using  flume  much easier\nby packaging up things into easy to use  sources , sinks ,  reducers , etc.", 
+            "title": "third party"
+        }, 
+        {
+            "location": "/thirdparty/github/", 
+            "text": "github\n\n\nA collection of github utilities that allow you to easily read data from github.\n\n\nissues api\n\n\nuser issues source\n\n\ngithub.issues.user(oauth=None,\n                   **parameters)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes\n\n\n\n\n\n\nparameters\n\n\nparameters\n\n\n\n\n\n\n\n\n\n\nThe \nparameters\n are any of the parameters exposed by the API that we've\nexposed as a keyword argument.\n\n\norgs issues source\n\n\ngithub.issues.orgs(org_name,\n                   oauth=None,\n                   **parametrs)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\norg_name\n\n\nname of the organization on github\n\n\nYes\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes\n\n\n\n\n\n\nparameters\n\n\nparameters\n\n\n\n\n\n\n\n\n\n\nThe \nparameters\n are any of the parameters exposed by the API that we've\nexposed as a keyword argument.\n\n\nrepo issues source\n\n\ngithub.issues.repo(owner,\n                   repo_name,\n                   oauth=None,\n                   **parametrs)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\nowner\n\n\nname of the repo owner on github\n\n\nYes\n\n\n\n\n\n\nrepo_name\n\n\nname of the repo name on github\n\n\nYes\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes\n\n\n\n\n\n\nparameters\n\n\nparameters\n\n\n\n\n\n\n\n\n\n\nThe \nparameters\n are any of the parameters exposed by the API that we've\nexposed as a keyword argument.\n\n\nissue source\n\n\ngithub.issues.issue(owner,\n                    repo_name,\n                    issue_number,\n                    oauth=None)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\nowner\n\n\nname of the repo owner on github\n\n\nYes\n\n\n\n\n\n\nrepo_name\n\n\nname of the repo name on github\n\n\nYes\n\n\n\n\n\n\nissue_nubmer\n\n\nthe github issue number to retrieve the details for\n\n\nYes\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes\n\n\n\n\n\n\n\n\npulls api\n\n\nrepo pull requests source\n\n\ngithub.pulls.repo(owner,\n                  repo_name,\n                  oauth=None,\n                  **parameters)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\nowner\n\n\nname of the repo owner on github\n\n\nYes\n\n\n\n\n\n\nrepo_name\n\n\nname of the repo name on github\n\n\nYes\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes\n\n\n\n\n\n\nparameters\n\n\nparameters\n\n\nNo\n\n\n\n\n\n\n\n\nThe \nparameters\n are any of the parameters exposed by the API that we've\nexposed as a keyword argument.\n\n\npull request commits source\n\n\ngithub.pulls.commits(owner,\n                     repo_name,\n                     pull_number,\n                     oauth=None,\n                     **parameters)\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\nowner\n\n\nname of the repo owner on github\n\n\nYes\n\n\n\n\n\n\nrepo_name\n\n\nname of the repo name on github\n\n\nYes\n\n\n\n\n\n\npull_number\n\n\npull number to get the commits associated with from github\n\n\nYes\n\n\n\n\n\n\noauth\n\n\nthe github oauth token to use when reading the authenticated users issues\n\n\nYes", 
+            "title": "github"
+        }, 
+        {
+            "location": "/thirdparty/github/#github", 
+            "text": "A collection of github utilities that allow you to easily read data from github.", 
+            "title": "github"
+        }, 
+        {
+            "location": "/thirdparty/github/#issues-api", 
+            "text": "", 
+            "title": "issues api"
+        }, 
+        {
+            "location": "/thirdparty/github/#user-issues-source", 
+            "text": "github.issues.user(oauth=None,\n                   **parameters)     Argument  Description  Required?      oauth  the github oauth token to use when reading the authenticated users issues  Yes    parameters  parameters      The  parameters  are any of the parameters exposed by the API that we've\nexposed as a keyword argument.", 
+            "title": "user issues source"
+        }, 
+        {
+            "location": "/thirdparty/github/#orgs-issues-source", 
+            "text": "github.issues.orgs(org_name,\n                   oauth=None,\n                   **parametrs)     Argument  Description  Required?      org_name  name of the organization on github  Yes    oauth  the github oauth token to use when reading the authenticated users issues  Yes    parameters  parameters      The  parameters  are any of the parameters exposed by the API that we've\nexposed as a keyword argument.", 
+            "title": "orgs issues source"
+        }, 
+        {
+            "location": "/thirdparty/github/#repo-issues-source", 
+            "text": "github.issues.repo(owner,\n                   repo_name,\n                   oauth=None,\n                   **parametrs)     Argument  Description  Required?      owner  name of the repo owner on github  Yes    repo_name  name of the repo name on github  Yes    oauth  the github oauth token to use when reading the authenticated users issues  Yes    parameters  parameters      The  parameters  are any of the parameters exposed by the API that we've\nexposed as a keyword argument.", 
+            "title": "repo issues source"
+        }, 
+        {
+            "location": "/thirdparty/github/#issue-source", 
+            "text": "github.issues.issue(owner,\n                    repo_name,\n                    issue_number,\n                    oauth=None)     Argument  Description  Required?      owner  name of the repo owner on github  Yes    repo_name  name of the repo name on github  Yes    issue_nubmer  the github issue number to retrieve the details for  Yes    oauth  the github oauth token to use when reading the authenticated users issues  Yes", 
+            "title": "issue source"
+        }, 
+        {
+            "location": "/thirdparty/github/#pulls-api", 
+            "text": "", 
+            "title": "pulls api"
+        }, 
+        {
+            "location": "/thirdparty/github/#repo-pull-requests-source", 
+            "text": "github.pulls.repo(owner,\n                  repo_name,\n                  oauth=None,\n                  **parameters)     Argument  Description  Required?      owner  name of the repo owner on github  Yes    repo_name  name of the repo name on github  Yes    oauth  the github oauth token to use when reading the authenticated users issues  Yes    parameters  parameters  No     The  parameters  are any of the parameters exposed by the API that we've\nexposed as a keyword argument.", 
+            "title": "repo pull requests source"
+        }, 
+        {
+            "location": "/thirdparty/github/#pull-request-commits-source", 
+            "text": "github.pulls.commits(owner,\n                     repo_name,\n                     pull_number,\n                     oauth=None,\n                     **parameters)     Argument  Description  Required?      owner  name of the repo owner on github  Yes    repo_name  name of the repo name on github  Yes    pull_number  pull number to get the commits associated with from github  Yes    oauth  the github oauth token to use when reading the authenticated users issues  Yes", 
+            "title": "pull request commits source"
+        }, 
+        {
+            "location": "/thirdparty/syslog/", 
+            "text": "syslog\n\n\nA collection of syslog utilities that make reading from syslog a whole lot\neasier.\n\n\nsyslog source\n\n\nsyslog(logfile=None,\n       path='/var/log/') | ...\n\n\n\n\n\n\n\n\n\n\nArgument\n\n\nDescription\n\n\nRequired?\n\n\n\n\n\n\n\n\n\n\nlogfile\n\n\nthe name of the exact syslog file to read (ie /var/log/syslog.7.gz\n\n\nNo, default: \nNone\n\n\n\n\n\n\npath\n\n\nthe path where the syslog files are located (including gzipped ones)\n\n\nNo, default: \n/var/log/\n\n\n\n\n\n\n\n\nWhen you don't set the \nlogfile\n we end up figuring out what syslog files are\nthere and reading through all in order and also handling compression along the\nway for the older syslog files that were rotated and compressed.\n\n\ncalculate syslog lines per day\n\n\nflume \nsyslog() | reduce(count=count(), every='1 day') | write('stdio')\n\n\n\n\n\nexample output:\n\n\n flume \nsyslog() | reduce(count=count(), every='1 day') | write('stdio')\n\n{\ncount\n: 1440, \ntime\n: \n2016-08-08T08:50:46.000Z\n}\n{\ncount\n: 2133, \ntime\n: \n2016-08-09T08:50:46.000Z\n}\n{\ncount\n: 1166, \ntime\n: \n2016-08-10T08:50:46.000Z\n}\n{\ncount\n: 2034, \ntime\n: \n2016-08-11T08:50:46.000Z\n}\n{\ncount\n: 2197, \ntime\n: \n2016-08-12T08:50:46.000Z\n}\n{\ncount\n: 1409, \ntime\n: \n2016-08-13T08:50:46.000Z\n}\n{\ncount\n: 644, \ntime\n: \n2016-08-14T08:50:46.000Z\n}\n{\ncount\n: 2763, \ntime\n: \n2016-08-15T08:50:46.000Z\n}\n\n\n\n\nOr on a \nbarchart\n using \ngnuplot\n:\n\n\nflume \nsyslog() | reduce(value=count(), every='1 day', name='syslog lines', time=date.strftime('time', '%Y-%m-%d')) | barchart('gnuplot')\n\n\n\n\n\nWhich produces for the syslog data on my system:\n\n\n     +----+----------+-----------+----------+-----------+----------+--------+-----------+-----+\n     |    +          +           +          +           +          +        +   syslog lines  |\n     |                                                                                        |\n3000 ++                                                                                      ++\n     |                                                                               ******   |\n2500 ++                                                                              *    *  ++\n     |                                                                               *    *   |\n     |             ******                            ******                          *    *   |\n2000 ++            *    *                 ******     *    *                          *    *  ++\n     |             *    *                 *    *     *    *                          *    *   |\n     |             *    *                 *    *     *    *                          *    *   |\n1500 ++ ******     *    *                 *    *     *    *     ******               *    *  ++\n     |  *    *     *    *                 *    *     *    *     *    *               *    *   |\n     |  *    *     *    *      ******     *    *     *    *     *    *               *    *   |\n1000 ++ *    *     *    *      *    *     *    *     *    *     *    *               *    *  ++\n     |  *    *     *    *      *    *     *    *     *    *     *    *     ******    *    *   |\n 500 ++ *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *  ++\n     |  *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *   |\n     |  * +  *     * +  *      * +  *     * +  *     *  + *     *  + *     *  + *    *  + *   |\n   0 ++-******-----******------******-----******-----******-----******-----******----******--++\n       2016-08-08 2016-08-10 2016-08-11 2016-08-12 2016-08-13 2016-08-14 2016-08-14 2016-08-15", 
+            "title": "syslog"
+        }, 
+        {
+            "location": "/thirdparty/syslog/#syslog", 
+            "text": "A collection of syslog utilities that make reading from syslog a whole lot\neasier.", 
+            "title": "syslog"
+        }, 
+        {
+            "location": "/thirdparty/syslog/#syslog-source", 
+            "text": "syslog(logfile=None,\n       path='/var/log/') | ...     Argument  Description  Required?      logfile  the name of the exact syslog file to read (ie /var/log/syslog.7.gz  No, default:  None    path  the path where the syslog files are located (including gzipped ones)  No, default:  /var/log/     When you don't set the  logfile  we end up figuring out what syslog files are\nthere and reading through all in order and also handling compression along the\nway for the older syslog files that were rotated and compressed.", 
+            "title": "syslog source"
+        }, 
+        {
+            "location": "/thirdparty/syslog/#calculate-syslog-lines-per-day", 
+            "text": "flume  syslog() | reduce(count=count(), every='1 day') | write('stdio')   example output:   flume  syslog() | reduce(count=count(), every='1 day') | write('stdio') \n{ count : 1440,  time :  2016-08-08T08:50:46.000Z }\n{ count : 2133,  time :  2016-08-09T08:50:46.000Z }\n{ count : 1166,  time :  2016-08-10T08:50:46.000Z }\n{ count : 2034,  time :  2016-08-11T08:50:46.000Z }\n{ count : 2197,  time :  2016-08-12T08:50:46.000Z }\n{ count : 1409,  time :  2016-08-13T08:50:46.000Z }\n{ count : 644,  time :  2016-08-14T08:50:46.000Z }\n{ count : 2763,  time :  2016-08-15T08:50:46.000Z }  Or on a  barchart  using  gnuplot :  flume  syslog() | reduce(value=count(), every='1 day', name='syslog lines', time=date.strftime('time', '%Y-%m-%d')) | barchart('gnuplot')   Which produces for the syslog data on my system:       +----+----------+-----------+----------+-----------+----------+--------+-----------+-----+\n     |    +          +           +          +           +          +        +   syslog lines  |\n     |                                                                                        |\n3000 ++                                                                                      ++\n     |                                                                               ******   |\n2500 ++                                                                              *    *  ++\n     |                                                                               *    *   |\n     |             ******                            ******                          *    *   |\n2000 ++            *    *                 ******     *    *                          *    *  ++\n     |             *    *                 *    *     *    *                          *    *   |\n     |             *    *                 *    *     *    *                          *    *   |\n1500 ++ ******     *    *                 *    *     *    *     ******               *    *  ++\n     |  *    *     *    *                 *    *     *    *     *    *               *    *   |\n     |  *    *     *    *      ******     *    *     *    *     *    *               *    *   |\n1000 ++ *    *     *    *      *    *     *    *     *    *     *    *               *    *  ++\n     |  *    *     *    *      *    *     *    *     *    *     *    *     ******    *    *   |\n 500 ++ *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *  ++\n     |  *    *     *    *      *    *     *    *     *    *     *    *     *    *    *    *   |\n     |  * +  *     * +  *      * +  *     * +  *     *  + *     *  + *     *  + *    *  + *   |\n   0 ++-******-----******------******-----******-----******-----******-----******----******--++\n       2016-08-08 2016-08-10 2016-08-11 2016-08-12 2016-08-13 2016-08-14 2016-08-14 2016-08-15", 
+            "title": "calculate syslog lines per day"
         }
     ]
 }
