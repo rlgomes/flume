@@ -64,7 +64,7 @@ class HttpTest(unittest.TestCase):
             ).execute()
 
             raise Exception('previous code should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('Internal Server Error')
 
         expect(mock_request.call_args_list).to.eq([
@@ -199,7 +199,7 @@ class HttpTest(unittest.TestCase):
             ).execute()
 
             raise Exception('previous code should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('Internal Server Error')
 
         expect(mock_request.call_args_list).to.eq([

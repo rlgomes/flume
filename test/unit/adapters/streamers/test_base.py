@@ -7,7 +7,7 @@ import unittest
 from robber import expect
 
 from flume.adapters.streamers import Streamer, register_streamer, get_streamer
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from test.unit.util import FakeIO
 
 
@@ -18,7 +18,7 @@ class BaseStreamersTest(unittest.TestCase):
         try:
             register_streamer('non-unique', object())
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('"non-unique" streamer already registered')
 
     def test_register_and_get_streamer_by_name(self):
@@ -35,7 +35,7 @@ class BaseStreamersTest(unittest.TestCase):
         try:
             get_streamer('non-existent')
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('"non-existent" streamer not registered')
 
     def test_new_streamer_must_have_a_read_method(self):
@@ -48,7 +48,7 @@ class BaseStreamersTest(unittest.TestCase):
             streamer = TestStreamer()
             streamer.read(stream)
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('you must implement the read method')
 
     def test_new_streamer_must_have_a_write_method(self):
@@ -61,5 +61,5 @@ class BaseStreamersTest(unittest.TestCase):
             streamer = TestStreamer()
             streamer.write(stream, [])
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('you must implement the write method')

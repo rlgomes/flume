@@ -8,7 +8,7 @@ import tempfile
 import pygal
 
 from flume.sinks.views.base import base
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume import moment
 
 HTML_TEMPLATE = """
@@ -47,7 +47,7 @@ class PyGal(base):
 
         if not is_ipython():
             if format not in ['png', 'html']:
-                raise FlumineException('supported formats are "html" and "png"')
+                raise FlumeException('supported formats are "html" and "png"')
 
             if filename is None:
                 # save to a temporary file and open with default image viewer
@@ -92,7 +92,7 @@ class PyGal(base):
                 chart.add(series_name, series)
 
         else:
-            raise FlumineException('unsupported chart type "%s" for pygal view'
+            raise FlumeException('unsupported chart type "%s" for pygal view'
                                    % chart_type)
 
         if is_ipython():

@@ -6,7 +6,7 @@ from flume.adapters.streamers.csver import CSV
 from flume.adapters.streamers.jsonler import JSONL
 from flume.adapters.streamers.jsoner import JSON
 from flume.adapters.streamers.grok import Grok
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 _STREAMERS = {}
 
@@ -16,11 +16,11 @@ def get_streamer(name, *args, **kwargs):
         return _STREAMERS[name](*args, **kwargs)
 
     else:
-        raise FlumineException('"%s" streamer not registered' % name)
+        raise FlumeException('"%s" streamer not registered' % name)
 
 def register_streamer(name, streamer):
     if name in _STREAMERS.keys():
-        raise FlumineException('"%s" streamer already registered' % name)
+        raise FlumeException('"%s" streamer already registered' % name)
 
     _STREAMERS[name] = streamer
 

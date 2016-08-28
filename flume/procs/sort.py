@@ -4,7 +4,7 @@ sort processor
 import operator
 
 from flume import node
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 
 class sort(node):
@@ -25,7 +25,7 @@ class sort(node):
             order = kwargs['order']
 
             if order not in ['asc', 'desc']:
-                raise FlumineException('order can be "asc" or "desc", not "%s"' % order)
+                raise FlumeException('order can be "asc" or "desc", not "%s"' % order)
 
             self.order = order
 
@@ -39,7 +39,7 @@ class sort(node):
             points = self.pull()
 
             if len(result) > self.limit:
-                raise FlumineException('sort buffer overflown, limit is %s, buffering %s' %
+                raise FlumeException('sort buffer overflown, limit is %s, buffering %s' %
                                        (self.limit, len(result)))
 
             result += points

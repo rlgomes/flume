@@ -10,7 +10,7 @@ from datetime import datetime
 import blessings
 
 from flume.sinks.views.base import base
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 
 class Gnuplot(base):
@@ -112,7 +112,7 @@ class Gnuplot(base):
                              for series_name in data.keys()]
 
         else:
-            raise FlumineException('unsupported chart type "%s" for pygal view'
+            raise FlumeException('unsupported chart type "%s" for pygal view'
                                    % chart_type)
 
         self.write('plot %s\n' % ', '.join(series_string))

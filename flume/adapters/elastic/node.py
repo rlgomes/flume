@@ -11,7 +11,7 @@ from elasticsearch.exceptions import RequestError
 from flume import logger, moment
 from flume.adapters.adapter import adapter
 from flume.adapters.elastic.query import filter_to_es_query
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume.point import Point
 
 
@@ -90,7 +90,7 @@ class elastic(adapter):
                 reason = exception.info['error']['root_cause'][0]['reason']
                 if re.match('No mapping found for .* in order to sort on',
                             reason):
-                    raise FlumineException(
+                    raise FlumeException(
                         ('Time field "%s" not found in data, set time to ' +
                          'the appropriate value or None to query timeless ' +
                          'data') % self.time)
@@ -115,7 +115,7 @@ class elastic(adapter):
 
         for error in errors:
             logger.error(error)
-            raise FlumineException('errors while writing to elasticsearch')
+            raise FlumeException('errors while writing to elasticsearch')
 
     def eof(self):
         pass

@@ -7,7 +7,7 @@ import requests_cache
 from flume import logger, moment
 from flume.adapters.adapter import adapter
 from flume.adapters import streamers
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume.point import Point
 
 
@@ -87,7 +87,7 @@ class http(adapter):
 
             def verify_response(response):
                 if response.status_code not in self.status:
-                    raise FlumineException('%s: %s' % (response.status_code, response.text))
+                    raise FlumeException('%s: %s' % (response.status_code, response.text))
 
             if self.streamer is not None:
                 response = requests.request(self.method,
@@ -126,7 +126,7 @@ class http(adapter):
                                     json=payload)
 
         if response.status_code not in self.status:
-            raise FlumineException('received bad response with %d: %s' %
+            raise FlumeException('received bad response with %d: %s' %
                                    (response.status_code, response.text))
 
     def write(self, points):

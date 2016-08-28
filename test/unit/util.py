@@ -2,9 +2,21 @@
 testing utilities
 """
 
+import contextlib
 import sys
 
+from flume import logger
+
+from dici import dici
+
 __IS_PY2 = sys.version[0] == '2'
+
+if __IS_PY2:
+    from StringIO import StringIO
+
+else:
+    from io import StringIO
+
 
 class FakeIO(object):
 
@@ -48,3 +60,54 @@ class FakeIO(object):
 
     def getvalue(self):
         return self.data
+
+@contextlib.contextmanager
+def redirect(input=''):
+    """
+    contextmanager to simply handle the redirection of stdout, stderr and
+    intercept the sys.exit() call from running the CLI so the running Python
+    instance doesn't exit but we can verify the exact exit code.
+    """
+    stdout = StringIO()
+    stderr = StringIO()
+
+    result = dici(exit=0,
+                  stdout=None,
+                  stderr=None)
+
+    original_exit = sys.exit
+
+    def exit(code):
+        if result.stdout is None:
+            result.stdout = stdout.getvalue()
+
+        if result.stderr is None:
+            result.stderr = stderr.getvalue()
+
+        result.exit = code
+
+    sys.exit = exit
+
+    original_stdin = sys.stdin
+    sys.stdin = FakeIO(input)
+
+    original_stdout = sys.stdout
+    sys.stdout = stdout
+
+    original_stderr = sys.stderr
+    sys.stderr = stderr
+
+    logger.init()
+
+    yield result
+
+    sys.stdin = original_stdin
+    sys.stdout = original_stdout
+    sys.stderr = original_stderr
+    sys.exit = original_exit
+
+    if result.stdout is None:
+        result.stdout = stdout.getvalue()
+
+    if result.stderr is None:
+        result.stderr = stderr.getvalue()

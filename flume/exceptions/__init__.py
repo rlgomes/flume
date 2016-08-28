@@ -3,7 +3,7 @@ flume exceptions module
 """
 
 
-class FlumineException(Exception):
+class FlumeException(Exception):
 
     def __init__(self, message):
         # following may seem odd but necessary for this to work on both

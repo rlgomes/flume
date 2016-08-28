@@ -14,7 +14,7 @@ import pytz
 from delta import parse
 from dateutil import parser
 
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume.util import is_string
 
 
@@ -74,12 +74,12 @@ def date(string):
                 struct_time, result = parsedatetime.Calendar().parse(string)
 
                 if result == 0:
-                    raise FlumineException('unable to parse date "%s"' % string)
+                    raise FlumeException('unable to parse date "%s"' % string)
 
                 dt = datetime.fromtimestamp(mktime(struct_time))
 
         if dt is None:
-            raise FlumineException('Unable to parse moment "%s"' % string)
+            raise FlumeException('Unable to parse moment "%s"' % string)
 
         if dt.tzinfo is None:
             # all dates without a timezone are assumed to be in UTC
@@ -87,7 +87,7 @@ def date(string):
 
         return dt
     else:
-        raise FlumineException('Unable to parse moment "%s"' % string)
+        raise FlumeException('Unable to parse moment "%s"' % string)
 
 def duration(string, context=None):
     """
@@ -114,11 +114,11 @@ def duration(string, context=None):
         delta = parse(string, context=context)
 
         if delta is None:
-            raise FlumineException('unable to parse the duration "%s"' % string)
+            raise FlumeException('unable to parse the duration "%s"' % string)
 
         return delta
 
-    raise FlumineException('unable to parse the duration "%s"' % string)
+    raise FlumeException('unable to parse the duration "%s"' % string)
 
 def datetime_to_iso8601(dt):
     """

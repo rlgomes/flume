@@ -1,18 +1,18 @@
 """
 """
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 _VIEWS = {}
 
 def get_view(name, **kwargs):
     if name not in _VIEWS:
-        raise FlumineException('view with name "%s", not found' % name)
+        raise FlumeException('view with name "%s", not found' % name)
 
     return _VIEWS[name](**kwargs)
 
 def register_view(name, view):
     if name in _VIEWS:
-        raise FlumineException('view with name "%s", already registered' % name)
+        raise FlumeException('view with name "%s", already registered' % name)
 
     _VIEWS[name] = view
 

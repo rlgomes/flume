@@ -2,7 +2,7 @@ import unittest
 
 from robber import expect
 from flume import *
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 from flume.core import register_sink, register_proc, register_source
 
@@ -12,7 +12,7 @@ class CoreTest(unittest.TestCase):
     """
 
     def test_failure_in_source_propagates_correctly(self):
-        with self.assertRaisesRegexp(FlumineException, 'Unable to parse moment "-1"'):
+        with self.assertRaisesRegexp(FlumeException, 'Unable to parse moment "-1"'):
             (
                 emit(start=-1)
             ).execute()
@@ -40,13 +40,13 @@ class CoreTest(unittest.TestCase):
             ).execute()
 
     def test_register_existing_source_fails(self):
-        with self.assertRaisesRegexp(FlumineException, '"emit" source already registered'):
+        with self.assertRaisesRegexp(FlumeException, '"emit" source already registered'):
             register_source(emit)
 
     def test_register_existing_proc_fails(self):
-        with self.assertRaisesRegexp(FlumineException, '"put" proc already registered'):
+        with self.assertRaisesRegexp(FlumeException, '"put" proc already registered'):
             register_proc(put)
 
     def test_register_existing_sink_fails(self):
-        with self.assertRaisesRegexp(FlumineException, '"write" sink already registered'):
+        with self.assertRaisesRegexp(FlumeException, '"write" sink already registered'):
             register_sink(write)
