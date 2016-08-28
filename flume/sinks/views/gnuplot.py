@@ -39,8 +39,6 @@ class Gnuplot(base):
                 self.write('exit\n')
                 self.process.wait()
 
-            import time
-            time.sleep(0.1)
             self.process = subprocess.Popen(['gnuplot'], stdin=subprocess.PIPE)
 
             terminal = blessings.Terminal()
