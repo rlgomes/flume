@@ -3,6 +3,7 @@ flume logger
 """
 
 import logging
+import sys
 
 from logging import DEBUG, INFO, ERROR, WARN, CRITICAL
 
@@ -12,12 +13,15 @@ def init():
     internal method that initialize the flume logger
     """
     logger = logging.getLogger('flume')
-    streamHandler = logging.StreamHandler()
+
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
+
+    streamHandler = logging.StreamHandler(stream=sys.stderr)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     streamHandler.setFormatter(formatter)
     logger.addHandler(streamHandler)
     logger.setLevel(logging.WARN)
-
 
 def setLogLevel(lvl):
     """

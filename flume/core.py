@@ -24,7 +24,7 @@ else:
     from queue import Queue as queue
     from queue import Empty
 
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume.point import Point
 
 
@@ -67,7 +67,7 @@ def register_source(source_class):
     processors and sinks as chainable methods
     """
     if source_class.name in __SOURCES.keys():
-        raise FlumineException('"%s" source already registered' % source_class.name)
+        raise FlumeException('"%s" source already registered' % source_class.name)
 
     logger.debug('register_source %s', source_class.name)
     __SOURCES[source_class.name] = source_class
@@ -85,7 +85,7 @@ def register_sink(sink_class):
     existing procs or sources as a chainable method
     """
     if sink_class.name in __SINKS.keys():
-        raise FlumineException('"%s" sink already registered' % sink_class.name)
+        raise FlumeException('"%s" sink already registered' % sink_class.name)
 
     logger.debug('register_sink %s', sink_class.name)
     __SINKS[sink_class.name] = sink_class
@@ -103,7 +103,7 @@ def register_proc(proc_class):
     procs and sinks as chainable methods
     """
     if proc_class.name in __PROCS.keys():
-        raise FlumineException('"%s" proc already registered' % proc_class.name)
+        raise FlumeException('"%s" proc already registered' % proc_class.name)
 
     logger.debug('register_proc %s', proc_class.name)
     __PROCS[proc_class.name] = proc_class
@@ -252,7 +252,7 @@ class node(object):
         every node should implement a loop method which is where they can handle
         the pushing/pulling of points
         """
-        raise FlumineException('Each node should implement the loop method')
+        raise FlumeException('Each node should implement the loop method')
 
     def run(self):
         """
@@ -274,7 +274,7 @@ class node(object):
                 loglevel=logger.WARN):
 
         if 'inited' not in self.__dict__ or not self.inited:
-            raise FlumineException('node.__init__ was never used')
+            raise FlumeException('node.__init__ was never used')
 
         # XXX: special case of a single source with no output doing an execute()
         #      on it shouldn't fail
@@ -342,13 +342,13 @@ class reducer(object):
         update method called when there is a new point to be passed to the
         reducer
         """
-        raise FlumineException('missing implementation for update method')
+        raise FlumeException('missing implementation for update method')
 
     def result(self):
         """
         reducer should return the reduced field value
         """
-        raise FlumineException('missing implementation for result method')
+        raise FlumeException('missing implementation for result method')
 
 class splitter(node):
     """

@@ -14,13 +14,13 @@ from robber import expect
 class ViewsTest(unittest.TestCase):
 
     def test_can_not_find_unregistered_view(self):
-        with self.assertRaisesRegexp(FlumineException,
+        with self.assertRaisesRegexp(FlumeException,
                                      'view with name "bananas", not found'):
             views.get_view('bananas')
 
     def test_can_not_register_existing_view(self):
         views.register_view('existing-view', object)
-        with self.assertRaisesRegexp(FlumineException,
+        with self.assertRaisesRegexp(FlumeException,
                                      'view with name "existing-view", already registered'):
             views.register_view('existing-view', object)
 

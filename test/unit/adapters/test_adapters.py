@@ -6,7 +6,7 @@ import unittest
 
 from flume.adapters import register_adapter, get_adapter
 from flume.adapters import adapter
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 from robber import expect
 
@@ -21,7 +21,7 @@ class AdaptersTest(unittest.TestCase):
         try:
             register_adapter(TestAdapter)
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('"non-unique" adapter already registered')
 
     def test_register_and_get_adapter_by_name(self):
@@ -39,7 +39,7 @@ class AdaptersTest(unittest.TestCase):
         try:
             get_adapter('non-existent', 'read')
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('"non-existent" adapter not registered')
 
     def test_register_and_get_adapter_by_name_with_missing_operation_fails(self):
@@ -49,5 +49,5 @@ class AdaptersTest(unittest.TestCase):
         register_adapter(TestAdapter)
         try:
             get_adapter('not-writable', 'write')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('"not-writable" adapter does not support write')

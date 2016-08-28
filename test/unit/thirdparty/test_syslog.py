@@ -2,7 +2,7 @@ import unittest
 
 from robber import expect
 from flume import *
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 from flume.core import register_sink, register_proc, register_source
 

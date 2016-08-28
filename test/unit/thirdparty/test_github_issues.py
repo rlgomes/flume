@@ -4,7 +4,7 @@ import mock
 
 from dici import dici
 from flume import *
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from robber import expect
 
 class GithubIssuesTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class GithubIssuesTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.issues.user('FAKETOKEN').execute()
 
     @mock.patch('requests.request')
@@ -79,7 +79,7 @@ class GithubIssuesTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.issues.orgs('whocares', 'FAKETOKEN').execute()
 
     @mock.patch('requests.request')
@@ -136,7 +136,7 @@ class GithubIssuesTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.issues.repo('whocares',
                                'somerepo',
                                oauth='FAKETOKEN').execute()
@@ -198,7 +198,7 @@ class GithubIssuesTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.issues.issue('whocares',
                                 'somerepo',
                                 1,
@@ -236,7 +236,7 @@ class GithubIssuesTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.issues.comments('whocares',
                                    'somerepo',
                                    1,

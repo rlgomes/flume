@@ -1,7 +1,7 @@
 """
 base view class
 """
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 class base(object):
 
@@ -32,4 +32,4 @@ class base(object):
                            a datetime object) multiple series represent multiple
                            bars for the same value of x.
         """
-        raise FlumineException('implement me')
+        raise FlumeException('implement me')

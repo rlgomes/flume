@@ -6,7 +6,7 @@ import mock
 
 from robber import expect
 from elasticsearch.exceptions import RequestError
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 from flume import *
 
@@ -35,7 +35,7 @@ class ElasticTest(unittest.TestCase):
             }
         })
 
-        with self.assertRaisesRegexp(FlumineException,
+        with self.assertRaisesRegexp(FlumeException,
                                      'Time field "time" not found in data, ' + 
                                      'set time to the appropriate value or ' +
                                      'None to query timeless data'):
@@ -244,7 +244,7 @@ class ElasticTest(unittest.TestCase):
         mock_elastic.return_value = {}
         mock_bulk.return_value = (None, ['oops'])
 
-        with self.assertRaisesRegexp(FlumineException,
+        with self.assertRaisesRegexp(FlumeException,
                                      'errors while writing to elasticsearch'):
             (
                 emit(limit=1, start='2016-01-01')

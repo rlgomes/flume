@@ -3,7 +3,7 @@ memory sink
 """
 
 from flume import sink
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 class memory(sink):
 
@@ -13,7 +13,7 @@ class memory(sink):
         sink.__init__(self, results)
 
         if not isinstance(results, list):
-            raise FlumineException('results must a list')
+            raise FlumeException('results must a list')
 
         self.results = results
 

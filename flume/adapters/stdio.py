@@ -3,13 +3,14 @@ stdio adapter
 """
 import codecs
 import re
-import six
 import sys
 import zlib
 
+import six
+
 from flume.adapters.adapter import adapter
 from flume.adapters import streamers
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from flume.point import Point
 
 # For things to work in Python 3
@@ -56,7 +57,7 @@ class InputStream(object):
                 self.decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
 
             else:
-                raise FlumineException('unsupported compression [%s]' % compression)
+                raise FlumeException('unsupported compression [%s]' % compression)
 
     def __remove_ansi(self, line):
         return re.sub(r'\x1b[^A-Za-z]*[A-Za-z]', '', line)
@@ -138,7 +139,7 @@ class OutputStream(object):
                                                    -zlib.MAX_WBITS)
 
             else:
-                raise FlumineException('unsupported compression [%s]' % compression)
+                raise FlumeException('unsupported compression [%s]' % compression)
 
     def write(self, data):
         if self.compressor is not None:
@@ -165,7 +166,9 @@ class OutputStream(object):
 
     def close(self):
         self.flush()
-        self.stream.close()
+
+        if self.stream != sys.stdout:
+            self.stream.close()
 
 class stdio(adapter):
     """
@@ -177,9 +180,6 @@ class stdio(adapter):
     """
 
     name = 'stdio'
-
-    stdout = sys.stdout
-    stdin = sys.stdin
 
     def __init__(self,
                  time=None,
@@ -198,9 +198,10 @@ class stdio(adapter):
 
         self.output = None
 
+
     def read(self):
         if self.file is None:
-            input_stream = InputStream(stdio.stdin,
+            input_stream = InputStream(sys.stdin,
                                        strip_ansi=self.strip_ansi,
                                        compression=self.compression)
 
@@ -225,7 +226,7 @@ class stdio(adapter):
     def write(self, points):
         if self.output is None:
             if self.file is None:
-                self.output = OutputStream(stdio.stdout,
+                self.output = OutputStream(sys.stdout,
                                            compression=self.compression)
             else:
                 if self.append:
@@ -248,4 +249,5 @@ class stdio(adapter):
     def eof(self):
         if self.output is not None:
             self.streamer.eof(self.output)
-            self.output.close()
+            if self.output != sys.stdout:
+                self.output.close()

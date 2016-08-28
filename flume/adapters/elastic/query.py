@@ -5,7 +5,7 @@ elastic query module
 """
 import ast
 
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 
 def to_es_query(node):
@@ -96,5 +96,5 @@ def filter_to_es_query(filter_expr):
             tree = ast.parse(filter_expr)
             return {'constant_score': to_es_query(tree)}
         except Exception as exception:
-            raise FlumineException('invalid filter expression: %s - %s' %
+            raise FlumeException('invalid filter expression: %s - %s' %
                                    (filter_expr, exception))

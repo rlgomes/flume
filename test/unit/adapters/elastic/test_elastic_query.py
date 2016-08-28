@@ -5,7 +5,7 @@ import unittest
 
 from robber import expect
 from flume.adapters.elastic.query import filter_to_es_query
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 
 class ElasticQueryTest(unittest.TestCase):
@@ -19,7 +19,7 @@ class ElasticQueryTest(unittest.TestCase):
         try:
             expect(filter_to_es_query('foo="bar"'))
             raise Exception('previous statement should have failed')
-        except FlumineException as exception:
+        except FlumeException as exception:
             expect(exception.message).to.contain('invalid filter expression: foo="bar"')
 
     def test_single_string_eq_query(self):

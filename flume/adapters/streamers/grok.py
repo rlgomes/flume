@@ -5,7 +5,7 @@ import pygrok
 
 from flume import Point, logger
 from flume.adapters.streamers.base import Streamer
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 
 
 class Grok(Streamer):
@@ -24,4 +24,4 @@ class Grok(Streamer):
                 logger.warn('not matchined %s' % line)
 
     def write(self, stream, points):
-        raise FlumineException('regex does not support writing data')
+        raise FlumeException('regex does not support writing data')

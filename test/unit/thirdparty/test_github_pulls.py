@@ -4,7 +4,7 @@ import mock
 
 from dici import dici
 from flume import *
-from flume.exceptions import FlumineException
+from flume.exceptions import FlumeException
 from robber import expect
 
 class GithubPullsTest(unittest.TestCase):
@@ -21,7 +21,7 @@ class GithubPullsTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.pulls.repo('whocares', 'repo', oauth='FAKETOKEN').execute()
 
     @mock.patch('requests.request')
@@ -82,7 +82,7 @@ class GithubPullsTest(unittest.TestCase):
             'json': lambda: []
         })
 
-        with self.assertRaisesRegexp(FlumineException, '400: oh shoot'):
+        with self.assertRaisesRegexp(FlumeException, '400: oh shoot'):
             github.pulls.commits('whocares', 'repo', 1, oauth='FAKETOKEN').execute()
 
     @mock.patch('requests.request')
