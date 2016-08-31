@@ -27,6 +27,17 @@ class adapter(object):
         """
         pass
 
+    def optimize(self, child):
+        """
+        optimize is called before `read` even executes and gives the underlying
+        adapter the ability to optimize certain downstream operations within the
+        adapter's engine and remove those underlying nodes with
+        `node.remove_node()` you can also traverse from this child downward by
+        following the `.child`
+        member.
+        """
+        pass
+
     def process_time_field(self, points, time_field):
         if time_field is None:
             time_field = 'time'
@@ -38,4 +49,3 @@ class adapter(object):
                     del point[time_field]
 
         return points
-

@@ -12,7 +12,7 @@ with the following options available at this time:
 
 ```python
 read('elastic',
-     index='_all',
+     index=None,
      type='metric',
      host='localhost',
      port=9200,
@@ -23,13 +23,13 @@ read('elastic',
 
 Argument | Description                                      | Required?
 -------- | ------------------------------------------------ | :---------
-index    | elasticsearch index to read from                 | No, default: `_all`
+index    | elasticsearch index to read from                 | No, default: `_all` for read, `metrics` for write 
 type     | elasticsearch document type to read              | No, default: `metric`
 host     | hostname of the elasticsearch instance           | No, default: `localhost`
 port     | port of the elasticsearch instance               | No, default: `9200`
 time     | field name that contains valid timestamp         | No, default: `time`
 filter   | filter expression to run against the es data (*) | No, default:  `None`
-batch    | the read batch size when reading from es         | No, default: `1024`
+batch    | the read/write batch size                        | No, default: `1024`
 
  * (*) filter expressions are further explained [here](../filter_expressions)
 

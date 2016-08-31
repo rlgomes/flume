@@ -8,7 +8,7 @@ import re
 from elasticsearch import Elasticsearch, helpers
 from elasticsearch.exceptions import RequestError
 
-from flume import logger, moment
+from flume import logger
 from flume.adapters.adapter import adapter
 from flume.adapters.elastic.query import filter_to_es_query
 from flume.exceptions import FlumeException
@@ -24,7 +24,7 @@ class elastic(adapter):
 
     def __init__(self,
                  time='time',
-                 index='_all',
+                 index=None,
                  type='metric',
                  host='localhost',
                  port=9200,
@@ -39,6 +39,8 @@ class elastic(adapter):
         self.batch = batch
         self.clients = {}
 
+        self.limit = None
+
     def _get_elasticsearch(self, host, port):
         """
         cache ES client
@@ -49,6 +51,13 @@ class elastic(adapter):
             self.clients[key] = Elasticsearch([host], port=port)
 
         return self.clients[key]
+
+    def optimize(self, proc):
+
+        # head optimization
+        if proc.name == 'head':
+            self.limit = proc.howmany
+            proc.remove_node()
 
     def read(self):
         """
@@ -67,16 +76,22 @@ class elastic(adapter):
         logger.debug('es query %s' % json.dumps(query))
 
         try:
+            count = 0
             for result in helpers.scan(client,
-                                       index=self.index,
+                                       index=self.index or '_all',
                                        query=query,
                                        preserve_order=True):
+                count += 1
+
                 point = Point(**result['_source'])
                 points.append(point)
 
                 if len(points) >= self.batch:
                     yield self.process_time_field(points, self.time)
                     points = []
+
+                if count == self.limit:
+                    break
 
             if len(points) > 0:
                 yield self.process_time_field(points, self.time)
@@ -102,12 +117,11 @@ class elastic(adapter):
         write data points to the index in the ES instance indicated
         """
         client = self._get_elasticsearch(self.host, self.port)
-
         pushing = []
 
         for point in points:
             point = point.json()
-            point['_index'] = self.index
+            point['_index'] = self.index or 'metrics'
             point['_type'] = self.type
             pushing.append(point)
 

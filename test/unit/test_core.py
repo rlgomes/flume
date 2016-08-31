@@ -11,6 +11,38 @@ class CoreTest(unittest.TestCase):
     verifies basic flume flow behaviors
     """
 
+    def test_remove_node_works_in_the_middle_of_the_pipeline(self):
+        results = []
+
+        a = emit(limit=3, start='2016-01-01')
+        b = put(foo='bar')
+        c = memory(results)
+
+        pipeline = a | b | c
+        # by removing the node it should no longer annotate the output with the
+        # field foo='bar'
+        b.remove_node()
+        pipeline.execute()
+
+        expect(results).to.eq([
+            {'time': '2016-01-01T00:00:00.000Z'},
+            {'time': '2016-01-01T00:00:01.000Z'},
+            {'time': '2016-01-01T00:00:02.000Z'}
+        ])
+
+    def test_remove_node_works_on_end_of_pipeline(self):
+        results = []
+
+        a = emit(limit=3, start='2016-01-01')
+        b = put(foo='bar')
+        c = memory(results)
+
+        pipeline = a | b | c
+        c.remove_node()
+        pipeline.execute()
+
+        expect(results).to.eq([])
+
     def test_failure_in_source_propagates_correctly(self):
         with self.assertRaisesRegexp(FlumeException, 'Unable to parse moment "-1"'):
             (
