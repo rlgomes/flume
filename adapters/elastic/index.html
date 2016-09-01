@@ -280,6 +280,12 @@
         
             
 <li >
+    <a href="../../procs/reduce/reducers/funcr/">funcr</a>
+</li>
+
+        
+            
+<li >
     <a href="../../procs/reduce/reducers/iterate/">iterate</a>
 </li>
 
@@ -482,7 +488,7 @@ github <a href="https://github.com/rlgomes/flume/issues">issues</a> tracking sys
 <p>Reading from the elastic adapter is done using the <a href="../../sources/read">read</a> source
 with the following options available at this time:</p>
 <pre><code class="python">read('elastic',
-     index='_all',
+     index=None,
      type='metric',
      host='localhost',
      port=9200,
@@ -503,7 +509,7 @@ with the following options available at this time:</p>
 <tr>
 <td>index</td>
 <td>elasticsearch index to read from</td>
-<td>No, default: <code>_all</code></td>
+<td>No, default: <code>_all</code> for read, <code>metrics</code> for write</td>
 </tr>
 <tr>
 <td>type</td>
@@ -532,7 +538,7 @@ with the following options available at this time:</p>
 </tr>
 <tr>
 <td>batch</td>
-<td>the read batch size when reading from es</td>
+<td>the read/write batch size</td>
 <td>No, default: <code>1024</code></td>
 </tr>
 </tbody>

@@ -280,6 +280,12 @@
         
             
 <li >
+    <a href="../procs/reduce/reducers/funcr/">funcr</a>
+</li>
+
+        
+            
+<li >
     <a href="../procs/reduce/reducers/iterate/">iterate</a>
 </li>
 
@@ -463,6 +469,8 @@
         
             <li><a href="#write-your-own">write your own</a></li>
         
+            <li><a href="#optimizations">optimizations</a></li>
+        
     
     </ul>
 </div></div>
@@ -487,29 +495,61 @@ core of <strong>flume</strong> as to better share with the community.</p>
 <p>To write your own adapter you need to extend from the class
 <strong>flume.adapters.adapter.adapter</strong> and then implement the methods:</p>
 <ul>
-<li><strong>name</strong> you must define the name of your adapter with a class level</li>
 <li>
-<p>attribute called name</p>
+<p><strong>name</strong> you must define the name of your adapter with a class level
+        attribute called name</p>
 </li>
 <li>
 <p><strong>__init__(self, ...)</strong> where you initialize your adapter and accept all of
-                            the keywords your read/write handlers are going to 
-                            handle.</p>
+        the keywords your read/write handlers are going to handle.</p>
 </li>
-<li><strong>read(self)</strong>: read method will handle reading points from your backend
-                    that match the criteria identified by the arguments to your
-                    <strong>__init__</strong> method and will yield those from the <strong>read</strong> 
-                    method until there's nothing left</li>
-<li><strong>write(self, points)</strong> writes the points given to the underlying backend
-                            and returns from this method once they've all been
-                            written out.</li>
-<li><strong>eof(self)</strong> called when there are no more points to write to the adapter
-                  and you can proceed to close off any connections to your
-                  backend.</li>
+<li>
+<p><strong>read(self)</strong>: read method will handle reading points from your backend
+        that match the criteria identified by the arguments to your <strong>__init__</strong>
+        method and will yield those from the <strong>read</strong> method until there's
+        nothing left</p>
+</li>
+<li>
+<p><strong>write(self, points)</strong> writes the points given to the underlying backend
+        and returns from this method once they've all been written out.</p>
+</li>
+<li>
+<p><strong>eof(self)</strong> called when there are no more points to write to the adapter
+        and you can proceed to close off any connections to your backend.</p>
+</li>
+<li>
+<p><strong>optimize(self, child)</strong> this method is called before the <code>read</code> source
+        executes and allows the adapter to take a downstream operation such as
+        <code>head</code>, <code>tail</code>, <code>reduce</code> and run it within the adapter's engine where the
+        data resides and by doing so optimize the <strong>flume</strong> program greatly since
+        we don't have to read all the data into <strong>flume</strong> and process it there.
+        There's a section below dedicated to explaining how to handle
+        optimizations within your own adapter. </p>
+</li>
 </ul>
 <p>Now that you've written your adapter you can register it using the
 <strong>register_streamer(cls)</strong> which will register your adapter with the name
-specified by the class level attribute <code>name</code>.</p></div>
+specified by the class level attribute <code>name</code>.</p>
+<h2 id="optimizations">optimizations</h2>
+<p>Optimizations are the way that <strong>flume</strong> takes a pipeline of operations and
+figures out which ones can be executed on the backend (closer to where the data
+resides) so that you don't have to transport data from its source to where the
+<strong>flume</strong> pipeline is executing in order to compute something on that data or
+make a decision about it. With that said the <code>optimize</code> method on the adapter
+allows you to see what is downstream from the adapter before the adapter starts
+running.</p>
+<p>As an example the simplest thing to optimize in an adapter is when the following
+proc is the <a href="./../procs/head/">head</a> proc then you can simply set a limit
+internally in your adapter and stop reading data once you've reached the desired
+first N values. This may not seem like much but can save a lot of time if you
+were to only need the top 100 values but had 1000 of them to read from a backend
+and would simply stop much earlier pulling irrelevant points from the backend.</p>
+<p>Have a look at how we implemented the <code>optimize</code> method for
+<a href="https://github.com/rlgomes/flume/blob/master/flume/adapters/elastic/node.py">elastic</a>
+and 
+<a href="https://github.com/rlgomes/flume/blob/master/flume/adapters/stdio.py">stdio</a>
+to get a simple view of how optimization can be done. We'll have more optimizations
+around doing counts and filters coming soon...</p></div>
             
         </div>
 
