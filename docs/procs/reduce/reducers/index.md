@@ -9,7 +9,10 @@ update calls with each point that makes it to the [reduce](../../put)
 ## built-in
 
   * [count](count/) 
+  * [date](date/) 
+  * [funcr](funcr/)
   * [iterate](iterate/) 
+  * [math](math/) 
   * [maximum](maximum/) 
   * [minimum](minimum/) 
 

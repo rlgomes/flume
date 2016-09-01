@@ -40,6 +40,7 @@ pages:
         - 'overview': 'procs/reduce/reducers/index.md'
         - 'count': 'procs/reduce/reducers/count.md'
         - 'date': 'procs/reduce/reducers/date.md'
+        - 'funcr': 'procs/reduce/reducers/funcr.md'
         - 'iterate': 'procs/reduce/reducers/iterate.md'
         - 'math': 'procs/reduce/reducers/math.md'
         - 'maximum': 'procs/reduce/reducers/maximum.md'
