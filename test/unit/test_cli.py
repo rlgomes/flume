@@ -49,5 +49,7 @@ class CLITest(unittest.TestCase):
             expect(io.stdout).to.eq('')
 
         expect(io.stderr).to.match(
+            '.* - DEBUG - <flume.sources.emit.emit object at .*> has started\n' +
             '.* - DEBUG - <flume.sources.emit.emit object at .*> pushing 1 points\n' +
+            '.* - DEBUG - <flume.sources.emit.emit object at .*> is done\n' +
             '.* - DEBUG - <flume.sources.emit.emit object at .*> pushing 1 points\n')

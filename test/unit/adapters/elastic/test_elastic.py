@@ -36,7 +36,7 @@ class ElasticTest(unittest.TestCase):
         })
 
         with self.assertRaisesRegexp(FlumeException,
-                                     'Time field "time" not found in data, ' + 
+                                     'Time field "time" not found in data, ' +
                                      'set time to the appropriate value or ' +
                                      'None to query timeless data'):
             read('elastic').execute()
@@ -105,25 +105,6 @@ class ElasticTest(unittest.TestCase):
         expect(results).to.eq([{'foo': 'bar'}])
         expect(mock_scan.call_args).to.eq(mock.call({},
                                                     index='_all',
-                                                    query={
-                                                        'sort': ['time'],
-                                                        'query': {
-                                                            'match_all': {}
-                                                        }
-                                                    },
-                                                    preserve_order=True))
-
-    @mock.patch('flume.adapters.elastic._get_elasticsearch')
-    @mock.patch('elasticsearch.helpers.scan')
-    def test_read_can_read_from_a_specific_index(self, mock_scan, mock_elastic):
-        mock_scan.return_value = [{'_source': {'foo': 'bar'}}]
-        mock_elastic.return_value = {}
-        results = []
-        (read('elastic', index='foo') | memory(results)).execute()
-
-        expect(results).to.eq([{'foo': 'bar'}])
-        expect(mock_scan.call_args).to.eq(mock.call({},
-                                                    index='foo',
                                                     query={
                                                         'sort': ['time'],
                                                         'query': {
@@ -255,6 +236,40 @@ class ElasticTest(unittest.TestCase):
 
     @mock.patch('flume.adapters.elastic._get_elasticsearch')
     @mock.patch('elasticsearch.helpers.bulk')
+    def test_write_uses_specified_batch_size(self, mock_bulk, mock_elastic):
+        mock_elastic.return_value = {}
+        mock_bulk.return_value = (None, [])
+
+        (
+            emit(limit=3, start='2016-01-01')
+            | write('elastic', host='bananas', port=9999, batch=2)
+        ).execute()
+
+        expect(mock_bulk.call_args_list).to.eq([
+            mock.call({}, [
+                {
+                    'time': '2016-01-01T00:00:00.000Z',
+                    '_type': 'metric',
+                    '_index': 'metrics'
+                },
+                {
+                    'time': '2016-01-01T00:00:01.000Z',
+                    '_type': 'metric',
+                    '_index': 'metrics'
+                }
+            ]),
+            mock.call({}, [
+                {
+                    'time': '2016-01-01T00:00:02.000Z',
+                    '_type': 'metric',
+                    '_index': 'metrics'
+                }
+            ])
+        ])
+
+
+    @mock.patch('flume.adapters.elastic._get_elasticsearch')
+    @mock.patch('elasticsearch.helpers.bulk')
     def test_write_timeless_points(self, mock_bulk, mock_elastic):
         mock_elastic.return_value = {}
         mock_bulk.return_value = (None, [])
@@ -267,9 +282,9 @@ class ElasticTest(unittest.TestCase):
         ).execute()
 
         expect(mock_bulk.call_args_list).to.eq([
-            mock.call({}, [{'count': 1, '_type': 'metric', '_index': '_all'}]),
-            mock.call({}, [{'count': 2, '_type': 'metric', '_index': '_all'}]),
-            mock.call({}, [{'count': 3, '_type': 'metric', '_index': '_all'}])
+            mock.call({}, [{'count': 1, '_type': 'metric', '_index': 'metrics'}]),
+            mock.call({}, [{'count': 2, '_type': 'metric', '_index': 'metrics'}]),
+            mock.call({}, [{'count': 3, '_type': 'metric', '_index': 'metrics'}]),
         ])
 
     @mock.patch('flume.adapters.elastic._get_elasticsearch')
@@ -281,26 +296,61 @@ class ElasticTest(unittest.TestCase):
         (
             emit(limit=3, start='2016-01-01')
             | put(count=count())
-            | write('elastic', host='bananas', port=9999)
+            | write('elastic', host='bananas', port=9999, batch=3)
         ).execute()
 
         expect(mock_bulk.call_args_list).to.eq([
-            mock.call({}, [{
-                '_type': 'metric',
-                '_index': '_all',
-                'time': '2016-01-01T00:00:00.000Z',
-                'count': 1
-            }]),
-            mock.call({}, [{
-                '_type': 'metric',
-                '_index': '_all',
-                'time': '2016-01-01T00:00:01.000Z',
-                'count': 2
-            }]),
-            mock.call({}, [{
-                '_type': 'metric',
-                '_index': '_all',
-                'time': '2016-01-01T00:00:02.000Z',
-                'count': 3
-            }])
+            mock.call({}, [
+                {
+                    '_type': 'metric',
+                    '_index': 'metrics',
+                    'time': '2016-01-01T00:00:00.000Z',
+                    'count': 1
+                },
+                {
+                    '_type': 'metric',
+                    '_index': 'metrics',
+                    'time': '2016-01-01T00:00:01.000Z',
+                    'count': 2
+                },
+                {
+                    '_type': 'metric',
+                    '_index': 'metrics',
+                    'time': '2016-01-01T00:00:02.000Z',
+                    'count': 3
+                }
+            ])
         ])
+
+    @mock.patch('flume.adapters.elastic._get_elasticsearch')
+    @mock.patch('elasticsearch.helpers.scan')
+    def test_optimizes_head(self, mock_scan, mock_elastic):
+        mock_scan.return_value = [
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}},
+            {'_source': {'foo': 'bar'}}
+        ]
+        mock_elastic.return_value = {}
+        results = []
+
+        a = read('elastic',
+                 index='flume_data_with_time')
+        b = head(5)
+        c = memory(results)
+        (a | b | c).execute()
+
+        expect(results).to.have.length(5)
+        expect(a.stats.points_pushed).to.eq(5)
+        expect(a.stats.points_pulled).to.eq(0)
+
+        expect(b.stats.points_pushed).to.eq(0)
+        expect(b.stats.points_pulled).to.eq(0)
+
+        expect(c.stats.points_pushed).to.eq(0)
+        expect(c.stats.points_pulled).to.eq(5)

@@ -1,8 +1,7 @@
 """
 read source
 """
-
-from flume import adapters, logger, moment, node
+from flume import adapters, node
 
 
 class read(node):
@@ -27,5 +26,8 @@ class read(node):
         self.read = self.instance.read
 
     def loop(self):
+        if self.child is not None:
+            self.instance.optimize(self.child)
+
         for points in self.read():
             self.push(points)

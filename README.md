@@ -64,6 +64,13 @@ or
 make integration
 ```
 
+Before running `make integration` be sure to spin up a local elasticsearch setup
+which can be easily done using docker like so:
+
+```bash
+docker run -p 9200:9200 elasticsearch:2.3.3
+```
+
 ## running coverage check
 
 To run the same check we run in Travis to make sure that code coverage is above

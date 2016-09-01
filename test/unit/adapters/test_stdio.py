@@ -19,7 +19,7 @@ from test.unit.util import redirect
 
 class StdioTest(unittest.TestCase):
 
-    def test_stdio_can_read_from_empty(self):
+    def test_can_read_from_empty(self):
         results = []
 
         with redirect(input=''):
@@ -30,7 +30,7 @@ class StdioTest(unittest.TestCase):
 
         expect(results).to.eq([])
 
-    def test_stdio_can_read_and_strip_ansi_sequences_from_terminal(self):
+    def test_can_read_and_strip_ansi_sequences_from_terminal(self):
         results = []
 
         with redirect(input='''\033[1;32m pid cmd cpu\033[0m
@@ -48,7 +48,7 @@ class StdioTest(unittest.TestCase):
             {'pid': '25', 'cmd': 'blah', 'cpu': '3.0'}
         ])
 
-    def test_stdio_can_read_and_strip_ansi_sequences_from_jsonl(self):
+    def test_can_read_and_strip_ansi_sequences_from_jsonl(self):
         results = []
 
         with redirect(input='{"time": "2016-01-01T00:00:00.000Z", "foo": "\033[1;32mbar\033[0m"}'):
@@ -61,7 +61,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:00:00.000Z", "foo": "bar"}
         ])
 
-    def test_stdio_can_read_and_strip_ansi_sequences_from_json(self):
+    def test_can_read_and_strip_ansi_sequences_from_json(self):
         results = []
 
         with redirect(input='[{"time": "2016-01-01T00:00:00.000Z", "foo": "\033[1;32mbar\033[0m"}]'):
@@ -74,7 +74,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:00:00.000Z", "foo": "bar"}
         ])
 
-    def test_stdio_can_read_and_not_strip_ansi_sequences_from_json(self):
+    def test_can_read_and_not_strip_ansi_sequences_from_json(self):
         results = []
 
         with redirect(input='[{"time": "2016-01-01T00:00:00.000Z", "foo": "\033[1;32mbar\033[0m"}]'):
@@ -87,7 +87,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:00:00.000Z", "foo": "\033[1;32mbar\033[0m"}
         ])
 
-    def test_stdio_can_read_a_single_point(self):
+    def test_can_read_a_single_point(self):
         results = []
 
         with redirect(input='{"time": "2016-01-01T00:00:00.000Z", "foo": "bar"}'):
@@ -100,7 +100,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:00:00.000Z", "foo": "bar"}
         ])
 
-    def test_stdio_can_read_multiple_points(self):
+    def test_can_read_multiple_points(self):
         results = []
 
         with redirect(input='{"time": "2016-01-01T00:00:00.000Z", "foo": 1}\n' +
@@ -117,7 +117,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:02:00.000Z", "foo": 3}
         ])
 
-    def test_stdio_can_read_a_single_timeless_point(self):
+    def test_can_read_a_single_timeless_point(self):
         results = []
 
         with redirect(input='{"foo": "bar"}'):
@@ -130,7 +130,7 @@ class StdioTest(unittest.TestCase):
             {"foo": "bar"}
         ])
 
-    def test_stdio_can_read_multiple_timeless_points(self):
+    def test_can_read_multiple_timeless_points(self):
         results = []
 
         with redirect(input='{"foo": 1}\n{"foo": 2}\n{"foo": 3}\n'):
@@ -145,7 +145,7 @@ class StdioTest(unittest.TestCase):
             {"foo": 3}
         ])
 
-    def test_stdio_can_read_multiple_points_with_custom_timefield(self):
+    def test_can_read_multiple_points_with_custom_timefield(self):
         results = []
 
         with redirect(input='{"bar": "2016-01-01T00:00:00.000Z", "foo": 1}\n' +
@@ -162,7 +162,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:02:00.000Z", "foo": 3}
         ])
 
-    def test_stdio_can_write_nothing(self):
+    def test_can_write_nothing(self):
         with redirect(input='') as io:
             (
                 read('stdio')
@@ -170,7 +170,7 @@ class StdioTest(unittest.TestCase):
             ).execute()
         expect(io.stdout).to.eq('')
 
-    def test_stdio_can_write_a_single_point(self):
+    def test_can_write_a_single_point(self):
         with redirect(input='') as io:
             (
                 emit(limit=1, start='2016-01-01')
@@ -181,7 +181,7 @@ class StdioTest(unittest.TestCase):
             'time': '2016-01-01T00:00:00.000Z'
         })
 
-    def test_stdio_can_write_a_multiple_points(self):
+    def test_can_write_a_multiple_points(self):
         with redirect() as io:
             (
                 emit(limit=5, start='2016-01-01')
@@ -204,7 +204,7 @@ class StdioTest(unittest.TestCase):
             {'time': '2016-01-01T00:00:04.000Z', 'count': 5}
         ])
 
-    def test_stdio_can_write_a_single_timeless_point(self):
+    def test_can_write_a_single_timeless_point(self):
         with redirect(input='') as io:
             (
                 emit(limit=1, start='2016-01-01')
@@ -216,7 +216,7 @@ class StdioTest(unittest.TestCase):
             'foo': 'bar'
         })
 
-    def test_stdio_can_write_a_multiple_timeless_points(self):
+    def test_can_write_a_multiple_timeless_points(self):
         with redirect(input='') as io:
             (
                 emit(limit=5, start='2016-01-01')
@@ -241,7 +241,7 @@ class StdioTest(unittest.TestCase):
             {'count': 5}
         ])
 
-    def test_stdio_can_read_a_single_point_from_a_file(self):
+    def test_can_read_a_single_point_from_a_file(self):
         _, tmpfile = tempfile.mkstemp()
 
         with open(tmpfile, 'w') as output:
@@ -256,7 +256,7 @@ class StdioTest(unittest.TestCase):
             {"time": "2016-01-01T00:00:00.000Z", "foo": "bar"}
         ])
 
-    def test_stdio_can_write_a_single_point_to_a_file(self):
+    def test_can_write_a_single_point_to_a_file(self):
         _, tmpfile = tempfile.mkstemp()
 
         (
@@ -270,7 +270,7 @@ class StdioTest(unittest.TestCase):
             })
 
 
-    def test_stdio_can_write_override_single_point_to_a_file(self):
+    def test_can_write_override_single_point_to_a_file(self):
         _, tmpfile = tempfile.mkstemp()
 
         (
@@ -288,7 +288,7 @@ class StdioTest(unittest.TestCase):
                 'time': '2016-01-01T00:00:00.000Z'
             })
 
-    def test_stdio_can_write_append_multiple_points_to_a_file(self):
+    def test_can_write_append_multiple_points_to_a_file(self):
         _, tmpfile = tempfile.mkstemp()
 
         (
@@ -306,27 +306,27 @@ class StdioTest(unittest.TestCase):
         (
             read('stdio', file=tmpfile)
             | memory(results)
-        ).execute() 
+        ).execute()
 
         expect(results).to.eq([
             {'time': '2015-01-01T00:00:00.000Z'},
             {'time': '2016-01-01T00:00:00.000Z'}
         ])
 
-    def test_stdio_raises_exception_on_invalid_compression_on_write(self):
+    def test_raises_exception_on_invalid_compression_on_write(self):
         with self.assertRaisesRegexp(FlumeException, 'unsupported compression \[bananas\]'):
             (
                 emit(limit=1, start='2016-01-01')
                 | write('stdio', format='jsonl', compression='bananas')
             ).execute()
 
-    def test_stdio_raises_exception_on_invalid_compression_on_read(self):
+    def test_raises_exception_on_invalid_compression_on_read(self):
         with self.assertRaisesRegexp(FlumeException, 'unsupported compression \[bananas\]'):
             (
                 read('stdio', format='jsonl', compression='bananas')
             ).execute()
 
-    def test_stdio_can_write_and_read_a_single_point_in_jsonl_with_zlib_compression(self):
+    def test_can_write_and_read_a_single_point_in_jsonl_with_zlib_compression(self):
         _, tmpfile = tempfile.mkstemp()
         (
             emit(limit=1, start='2016-01-01')
@@ -340,7 +340,7 @@ class StdioTest(unittest.TestCase):
         ).execute()
         expect(results).to.eq([{"time": "2016-01-01T00:00:00.000Z"}])
 
-    def test_stdio_can_write_and_read_a_single_point_in_jsonl_with_gzip_compression(self):
+    def test_can_write_and_read_a_single_point_in_jsonl_with_gzip_compression(self):
         _, tmpfile = tempfile.mkstemp()
         (
             emit(limit=1, start='2016-01-01')
@@ -354,7 +354,7 @@ class StdioTest(unittest.TestCase):
         ).execute()
         expect(results).to.eq([{"time": "2016-01-01T00:00:00.000Z"}])
 
-    def test_stdio_can_write_and_read_a_single_point_in_csv_with_deflate_compression(self):
+    def test_can_write_and_read_a_single_point_in_csv_with_deflate_compression(self):
         _, tmpfile = tempfile.mkstemp()
         (
             emit(limit=1, start='2016-01-01')
@@ -367,3 +367,23 @@ class StdioTest(unittest.TestCase):
             | memory(results)
         ).execute()
         expect(results).to.eq([{"time": "2016-01-01T00:00:00.000Z"}])
+
+    def test_optimizes_head(self):
+        results = []
+
+        a = read('stdio',
+                 format='grok',
+                 file='test/unit/adapters/inputs/long.log')
+        b = head(5)
+        c = memory(results)
+        (a | b | c).execute()
+
+        expect(results).to.have.length(5)
+        expect(a.stats.points_pushed).to.eq(5)
+        expect(a.stats.points_pulled).to.eq(0)
+
+        expect(b.stats.points_pushed).to.eq(0)
+        expect(b.stats.points_pulled).to.eq(0)
+
+        expect(c.stats.points_pushed).to.eq(0)
+        expect(c.stats.points_pulled).to.eq(5)

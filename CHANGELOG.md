@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - testing utility `test.unit.util.redirect` to capture stdout, stderr and
   `sys.exit` code for CLI testing
+- initial prototype framework for optimizations in adapters with the head proc
+  being optimized in the elastic and stdio adapters.
 
 ### Changed
 - stdio tests to use the new `redirect` utility to capture stdout, stderr and

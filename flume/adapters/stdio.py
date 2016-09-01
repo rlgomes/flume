@@ -34,8 +34,7 @@ class InputStream(object):
         ANSI sequences from the stream.
 
       * handles compressed streams by decompressing using the algorithm
-        specified by the compression option.
-    """
+        specified by the compression option.  """
 
     def __init__(self,
                  stream,
@@ -197,16 +196,35 @@ class stdio(adapter):
         self.compression = compression
 
         self.output = None
+        self.limit = None
 
+    def optimize(self, proc):
+
+        # head optimization
+        if proc.name == 'head':
+            self.limit = proc.howmany
+            proc.remove_node()
 
     def read(self):
+
+        def read_data(input_stream):
+            """
+            internal method to read
+            """
+            count = 0
+            for point in self.streamer.read(input_stream):
+                if self.limit is not None and count == self.limit:
+                    break
+                yield self.process_time_field([Point(**point)], self.time)
+                count += 1
+
         if self.file is None:
             input_stream = InputStream(sys.stdin,
                                        strip_ansi=self.strip_ansi,
                                        compression=self.compression)
 
-            for point in self.streamer.read(input_stream):
-                yield self.process_time_field([Point(**point)], self.time)
+            for points in read_data(input_stream):
+                yield points
 
         else:
             if six.PY2:
@@ -216,12 +234,12 @@ class stdio(adapter):
                 encoding = _DEFAULT_ENCODING
 
             with codecs.open(self.file, 'r', encoding=encoding) as stream:
-                stream = InputStream(stream,
-                                     strip_ansi=self.strip_ansi,
-                                     compression=self.compression)
+                input_stream = InputStream(stream,
+                                           strip_ansi=self.strip_ansi,
+                                           compression=self.compression)
 
-                for point in self.streamer.read(stream):
-                    yield self.process_time_field([Point(**point)], self.time)
+                for points in read_data(input_stream):
+                    yield points
 
     def write(self, points):
         if self.output is None:

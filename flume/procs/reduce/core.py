@@ -74,7 +74,7 @@ class reduce(node):
                         gaps = int((point.time - batch_start).total_seconds()/every.total_seconds())
 
                         # if we reached the end of a batch then push
-                        self.push(results.values())
+                        self.push(list(results.values()))
 
                         # new batch
                         batch_start = batch_end
@@ -123,7 +123,7 @@ class reduce(node):
                                 batch_end = batch_end + every
 
                                 # if we reached the end of a batch then push
-                                self.push(empty_results.values())
+                                self.push(list(empty_results.values()))
 
                             results = {}
                             init_results(results, fields, by_key, Point(time=batch_start), point)
@@ -151,4 +151,4 @@ class reduce(node):
 
                     results[by_key][key] = fields_copy[key]
 
-        self.push(results.values())
+        self.push(list(results.values()))

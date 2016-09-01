@@ -12,6 +12,7 @@ import threading
 
 import six
 
+from dici import dici
 from flume import moment
 from flume import logger
 from flume import util
@@ -44,7 +45,6 @@ def build_node_func(which_node):
         internal method responsible for hooking up the nodes in a flume
         pipeline
         """
-
         node_instance = which_node(*args, **kwargs)
 
         if not hasattr(self, 'outputs'):
@@ -57,6 +57,7 @@ def build_node_func(which_node):
                        parent=self,
                        source=source)
 
+        self.child = node_instance
         return node_instance
 
     return node_func
@@ -143,6 +144,12 @@ class node(object):
         self.exc_info = queue()
         self.inputs_index = None
 
+        self.stats = dici(points_pushed=0,
+                          points_pulled=0)
+
+        self.parent = None
+        self.child = None
+
     def init_node(self,
                   source=None,
                   parent=None,
@@ -152,6 +159,7 @@ class node(object):
         self.inputs = inputs
         self.outputs = outputs
         self.parent = parent
+        self.child = None
 
     def pull(self, wait=True):
         """
@@ -197,7 +205,8 @@ class node(object):
 
         if self.inputs is None or len(self.inputs) == 0:
             self.running = False
-
+        
+        self.stats.points_pulled += len(result)
         logger.debug('%s pulling %s points', self, len(result))
         return result
 
@@ -209,6 +218,9 @@ class node(object):
 
         if isinstance(points, Point):
             points = [points]
+
+        if points != [] and points[0] != node.EOF:
+            self.stats.points_pushed += len(points)
 
         logger.debug('%s pushing %s points', self, len(points))
 
@@ -245,6 +257,8 @@ class node(object):
                        outputs=[queue()],
                        parent=self,
                        source=source)
+
+        self.child = other
         return other
 
     def loop(self):
@@ -259,6 +273,7 @@ class node(object):
         node run method used by flume internally to manage thread execution
         """
         try:
+            logger.debug('%s has started', self)
             self.loop()
             self.exc_info.put(None)
 
@@ -266,6 +281,7 @@ class node(object):
             self.exc_info.put(sys.exc_info())
 
         finally:
+            logger.debug('%s is done', self)
             # must make sure to push EOF even if there was a failure
             self.push([self.EOF])
 
@@ -305,6 +321,22 @@ class node(object):
 
             if exc_info is not None:
                 six.reraise(exc_info[0], exc_info[1], exc_info[2])
+
+    def remove_node(self):
+        """
+        removes this node from the pipeline and makes sure to connect its
+        parent to its child
+        """
+        if self.child:
+            self.parent.child = self.child
+            self.child.parent = self.parent
+
+        if self.parent:
+            self.outputs = []
+            self.parent.push([node.EOF])
+
+        if self.child:
+            self.parent.outputs = self.child.inputs
 
     def input_count(self):
         """
