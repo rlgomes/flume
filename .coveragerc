@@ -4,4 +4,4 @@ source=flume
 [report]
 include=flume*
 show_missing=True
-fail_under=94
+fail_under=95
