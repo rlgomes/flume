@@ -27,9 +27,9 @@ class ElasticTest(unittest.TestCase):
         # create 10 points in a test index
         (
             emit(limit=10, start='2016-01-01')
-            | put(string=iterate(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),
-                  integer=count(),
-                  float=math.ceil('integer'))
+            | put(string=iterate(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']))
+            | put(integer=count())
+            | put(float=math.ceil('integer'))
             | write('elastic', index='flume_data_with_time')
         ).execute()
 
