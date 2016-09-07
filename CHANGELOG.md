@@ -84,8 +84,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - first release of flume!
 
-[Unreleased]: https://github.com/rlgomes/flume/compare/v0.4...HEAD
-[0.4.0]: https://github.com/rlgomes/flume/compare/v0.3.8...v0.4
+[Unreleased]: https://github.com/rlgomes/flume/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/rlgomes/flume/compare/v0.3.8...v0.4.0
 [0.3.8]: https://github.com/rlgomes/flume/compare/v0.3.7...v0.3.8
 [0.3.7]: https://github.com/rlgomes/flume/compare/v0.3.6...v0.3.7
 [0.3.6]: https://github.com/rlgomes/flume/compare/v0.3.5...v0.3.6
