@@ -5,7 +5,9 @@ elastic adapter core module
 import json
 import re
 
-from elasticsearch import Elasticsearch, helpers
+import elasticsearch
+
+from elasticsearch import helpers
 from elasticsearch.exceptions import RequestError
 
 from flume import logger
@@ -40,6 +42,7 @@ class elastic(adapter):
         self.clients = {}
 
         self.limit = None
+        self.aggs = None
 
     def _get_elasticsearch(self, host, port):
         """
@@ -48,7 +51,7 @@ class elastic(adapter):
         key = '%s:%s' % (host, port)
 
         if key not in self.clients:
-            self.clients[key] = Elasticsearch([host], port=port)
+            self.clients[key] = elasticsearch.Elasticsearch([host], port=port)
 
         return self.clients[key]
 
@@ -59,6 +62,39 @@ class elastic(adapter):
             self.limit = proc.howmany
             proc.remove_node()
 
+        # reduce optimizations
+        if proc.name == 'reduce':
+            # currently only handling a single count reducer optimization
+            if len(proc.fields) == 1:
+                self.aggs = {}
+
+                for (name, value) in proc.fields.items():
+                    if value.name() == 'count':
+                        # we can have es calculate this aggregation for us
+                        self.aggs[name] = {
+                            'value_count': {
+                                'field': '_type'
+                             }
+                        }
+
+                    elif value.name() == 'maximum':
+                        # we can have es calculate this aggregation for us
+                        self.aggs[name] = {
+                            'max': {
+                                'field': value.fieldname
+                            }
+                        }
+
+                    elif value.name() == 'minimum':
+                        # we can have es calculate this aggregation for us
+                        self.aggs[name] = {
+                            'min': {
+                                'field': value.fieldname
+                            }
+                        }
+
+                proc.remove_node()
+
     def read(self):
         """
         read points out of ES
@@ -66,35 +102,61 @@ class elastic(adapter):
         points = []
         client = self._get_elasticsearch(self.host, self.port)
 
-        query = {
-            'query': filter_to_es_query(self.filter)
-        }
-
-        if self.time is not None:
-            query['sort'] = [self.time]
-
-        logger.debug('es query %s' % json.dumps(query))
-
         try:
-            count = 0
-            for result in helpers.scan(client,
-                                       index=self.index or '_all',
-                                       query=query,
-                                       preserve_order=True):
-                count += 1
+            if self.aggs is not None:
+                query = {
+                    'aggs': self.aggs,
+                    # get the first result so we have a timestamp for our
+                    # resulting reduction
+                    'size': 1
+                }
 
-                point = Point(**result['_source'])
+                if self.time is not None:
+                    query['sort'] = [self.time]
+
+                logger.debug('es query %s' % json.dumps(query))
+
+                response = client.search(index=self.index or '_all',
+                                         body=query)
+                point = Point()
+
+                for (name, nested_value) in response['aggregations'].items():
+                    point[name] = nested_value['value']
+
+                point[self.time] = response['hits']['hits'][0]['_source'][self.time]
+
                 points.append(point)
-
-                if len(points) >= self.batch:
-                    yield self.process_time_field(points, self.time)
-                    points = []
-
-                if count == self.limit:
-                    break
-
-            if len(points) > 0:
                 yield self.process_time_field(points, self.time)
+
+            else:
+                count = 0
+                query = {
+                    'query': filter_to_es_query(self.filter)
+                }
+
+                if self.time is not None:
+                    query['sort'] = [self.time]
+
+                logger.debug('es query %s' % json.dumps(query))
+
+                for result in helpers.scan(client,
+                                           index=self.index or '_all',
+                                           query=query,
+                                           preserve_order=True):
+                    count += 1
+
+                    point = Point(**result['_source'])
+                    points.append(point)
+
+                    if len(points) >= self.batch:
+                        yield self.process_time_field(points, self.time)
+                        points = []
+
+                    if count == self.limit:
+                        break
+
+                if len(points) > 0:
+                    yield self.process_time_field(points, self.time)
 
         except RequestError as exception:
             # make time field related errors a little easier to digest instead

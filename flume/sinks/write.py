@@ -36,6 +36,6 @@ class write(sink):
                     buffered = buffered[self.batch:]
 
         if len(buffered) > 0:
-            self.write(buffered[:self.batch])
+            self.write(buffered)
 
         self.instance.eof()

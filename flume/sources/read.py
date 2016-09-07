@@ -26,7 +26,7 @@ class read(node):
         self.read = self.instance.read
 
     def loop(self):
-        if self.child is not None:
+        if self.child is not None and self.config.optimize:
             self.instance.optimize(self.child)
 
         for points in self.read():

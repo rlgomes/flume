@@ -71,9 +71,4 @@ Have a look at how we implemented the `optimize` method for
 [elastic](https://github.com/rlgomes/flume/blob/master/flume/adapters/elastic/node.py)
 and 
 [stdio](https://github.com/rlgomes/flume/blob/master/flume/adapters/stdio.py)
-to get a simple view of how optimization can be done. We'll have more optimizations
-around doing counts and filters coming soon...
-
-
-
-
+to get a simple view of how optimization can be done.

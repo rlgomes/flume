@@ -147,6 +147,8 @@ class node(object):
         self.stats = dici(points_pushed=0,
                           points_pulled=0)
 
+        self.config = dici()
+
         self.parent = None
         self.child = None
 
@@ -287,7 +289,8 @@ class node(object):
 
     def execute(self,
                 wait=True,
-                loglevel=logger.WARN):
+                loglevel=logger.WARN,
+                optimize=True):
 
         if 'inited' not in self.__dict__ or not self.inited:
             raise FlumeException('node.__init__ was never used')
@@ -296,7 +299,8 @@ class node(object):
         #      on it shouldn't fail
         if not hasattr(self, 'outputs'):
             node.init_node(self, outputs=[])
-        
+
+        self.config.optimize = optimize
         logger.setLogLevel(loglevel)
 
         # XXX: pooling here ?
@@ -308,7 +312,9 @@ class node(object):
         thread.start()
 
         if self.parent:
-            self.parent.execute(wait=wait, loglevel=loglevel)
+            self.parent.execute(wait=wait,
+                                loglevel=loglevel,
+                                optimize=optimize)
 
         if wait:
             while thread.is_alive():
@@ -382,6 +388,9 @@ class reducer(object):
         """
         raise FlumeException('missing implementation for result method')
 
+    def name(self):
+        return type(self).__name__
+
 class splitter(node):
     """
     # splitter
@@ -415,7 +424,8 @@ class splitter(node):
 
     def execute(self,
                 wait=True,
-                loglevel=logging.ERROR):
+                loglevel=logging.ERROR,
+                optimize=True):
 
         def find_root(flume):
             """
@@ -461,14 +471,17 @@ class splitter(node):
                            source=source)
 
             forwarder.execute(wait=False,
-                              loglevel=loglevel)
+                              loglevel=loglevel,
+                              optimize=optimize)
 
             # start underlying flumes
             for flume in self.flumes:
                 flume.execute(wait=False,
-                              loglevel=loglevel)
+                              loglevel=loglevel,
+                              optimize=optimize)
 
         # override default behavior to execute the underlying flume
         node.execute(self,
                      wait=False,
-                     loglevel=loglevel)
+                     loglevel=loglevel,
+                     optimize=optimize)
