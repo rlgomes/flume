@@ -20,10 +20,16 @@ VERSION = open(os.path.join(os.path.dirname(flume.__file__),
 
 @click.command()
 @click.version_option(version=VERSION)
-@click.option('--debug', '-d', count=True, help='debug mode')
+@click.option('--debug', '-d',
+              count=True,
+              help='debug mode')
+@click.option('--optimize/--no-optimize',
+              default=True,
+              help='turns read optimizations on/off, default: on')
 @click.argument('program')
 def main(program=None,
-         debug=False):
+         debug=False,
+         optimize=True):
     """
     simple command line entry point for executing flume programs
     """
@@ -47,7 +53,8 @@ def main(program=None,
                 for thing in dir(module):
                     globals()[thing] = module.__dict__[thing]
 
-    eval(program, globals(), locals()).execute(loglevel=loglevel)
+    eval(program, globals(), locals()).execute(loglevel=loglevel,
+                                               optimize=optimize)
 
 if __name__ == '__main__':
     main()
