@@ -11,10 +11,6 @@ class memory(sink):
 
     def __init__(self, results):
         sink.__init__(self, results)
-
-        if not isinstance(results, list):
-            raise FlumeException('results must a list')
-
         self.results = results
 
     def loop(self):

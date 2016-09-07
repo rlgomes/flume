@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - sped up emit and general flow of points through longer pipelines, exact numbers
   will be monitored by the new benchmark tests
 
+- added implicit sink when one isn't provided so running something like:
+  `flume "emit(limit=1)"` still produces output on the CLI. The default is to
+  set the implicit_sink value on the execute() method to None so that pipelines
+  can be executed that have no sink programatically
+
 ## [0.4.0] - 2016-09-06
 ### Added
 - testing utility `test.unit.util.redirect` to capture stdout, stderr and
