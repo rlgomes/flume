@@ -29,7 +29,10 @@ class Point(dici):
         dici.__init__(self, **fields)
 
         if '__meta__' not in self:
-            self['__meta__'] = {'flume_path': ''}
+            self['__meta__'] = {
+                'flume_path': '',
+                'input_index': 0
+            }
 
     def hasfield(self, dot_notation):
         """
@@ -75,3 +78,6 @@ class Point(dici):
 
     def __str__(self):
         return json.dumps(self.json(), sort_keys=True)
+
+    def raw(self):
+        return dici.__str__(self)

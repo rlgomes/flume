@@ -64,5 +64,7 @@ def critical(*args, **kwargs):
     """
     logging.getLogger('flume').critical(*args, **kwargs)
 
+def isDebug():
+    return logging.getLevelName() == logging.DEBUG
 
 init()

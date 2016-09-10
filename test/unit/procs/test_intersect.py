@@ -128,6 +128,121 @@ class IntersectTest(unittest.TestCase):
 
         expect(ABC1).to.eq(ABC2)
 
+    def test_idempotency_with_timeless_data(self):
+        """
+        A ∩ A = A
+        """
+        AnA = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=A))
+            | intersect('foo')
+            | memory(AnA)
+        ).execute()
+
+        expect(AnA).to.eq(A)
+
+    def test_domination_with_timeless_data(self):
+        """
+        A ∩ ∅ = ∅
+        """
+        An0 = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=[]))
+            | intersect('foo')
+            | memory(An0)
+        ).execute()
+
+        expect(An0).to.eq([])
+
+    def test_commutativity_with_timeless_data(self):
+        """
+        A ∩ B = B ∩ A
+        """
+        AnB = []
+        BnA = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+
+        (
+            (emit(points=A), emit(points=B))
+            | intersect('foo')
+            | memory(AnB)
+        ).execute()
+
+        (
+            (emit(points=B), emit(points=A))
+            | intersect('foo')
+            | memory(BnA)
+        ).execute()
+
+        expect(AnB).to.eq(BnA)
+
+    def test_associativity_with_timeless_data(self):
+        """
+        A ∩ (B ∩ C) = (A ∩ B) ∩ C.
+        """
+        ABC1 = []
+        ABC2 = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+        C = [
+            {'foo': '2', 'a': 3},
+            {'foo': '4', 'a': 4},
+            {'foo': '6', 'a': 5}
+        ]
+
+        (
+            (
+                emit(points=A),
+                (emit(points=B), emit(points=C)) | intersect('foo')
+            )
+            | intersect('foo')
+            | memory(ABC1)
+        ).execute()
+
+        (
+            (
+                (emit(points=A), emit(points=B)) | intersect('foo'),
+                emit(points=C)
+            )
+            | intersect('foo')
+            | memory(ABC2)
+        ).execute()
+
+        expect(ABC1).to.eq(ABC2)
+
     def test_empty_to_intersect_of_a_single_historical_stream(self):
         results = []
         (

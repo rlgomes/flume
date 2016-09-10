@@ -8,6 +8,17 @@ from robber import expect
 from flume import *
 
 
+def equal_sets(first, second):
+    """
+    verifies the elements contained in first list are all present in second list
+    and vice versa but not verifying the order in anyway
+    """
+    for element in first:
+        expect(second).to.contain(element)
+
+    for element in second:
+        expect(first).to.contain(element)
+
 class UnionTest(unittest.TestCase):
 
     # test basic union properties from
@@ -127,6 +138,122 @@ class UnionTest(unittest.TestCase):
         ).execute()
 
         expect(ABC1).to.eq(ABC2)
+
+    def test_idempotency_with_timeless_data(self):
+        """
+        A ∪ A = A
+        """
+        AnA = []
+
+        A = [
+            {'foo': '1', 'a': 0},
+            {'foo': '2', 'a': 1},
+            {'foo': '3', 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=A))
+            | union('foo')
+            | memory(AnA)
+        ).execute()
+
+        expect(AnA).to.eq(A)
+
+    def test_domination_with_timeless_data(self):
+        """
+        A ∪ ∅ = A
+        """
+        An0 = []
+
+        A = [
+            {'foo': 1, 'a': 0},
+            {'foo': 2, 'a': 1},
+            {'foo': 3, 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=[]))
+            | union('foo')
+            | memory(An0)
+        ).execute()
+
+        expect(An0).to.eq(A)
+
+    def test_commutativity_with_timeless_data(self):
+        """
+        A ∪ B = B ∪ A
+        """
+        AuB = []
+        BuA = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+
+        (
+            (emit(points=A), emit(points=B))
+            | union('foo')
+            | memory(AuB)
+        ).execute()
+
+        (
+            (emit(points=B), emit(points=A))
+            | union('foo')
+            | memory(BuA)
+        ).execute()
+
+        # timeless data has no order
+        equal_sets(AuB, BuA)
+
+    def test_associativity_with_timeless_data(self):
+        """
+        A ∪ (B ∪ C) = (A ∪ B) ∪ C.
+        """
+        ABC1 = []
+        ABC2 = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+        C = [
+            {'foo': '2', 'a': 3},
+            {'foo': '4', 'a': 4},
+            {'foo': '6', 'a': 5}
+        ]
+
+        (
+            (
+                emit(points=A),
+                (emit(points=B), emit(points=C)) | union('foo')
+            )
+            | union('foo')
+            | memory(ABC1)
+        ).execute()
+
+        (
+            (
+                (emit(points=A), emit(points=B)) | union('foo'),
+                emit(points=C)
+            )
+            | union('foo')
+            | memory(ABC2)
+        ).execute()
+
+        equal_sets(ABC1, ABC2)
 
     def test_single_historical_stream(self):
         results = []

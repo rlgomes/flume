@@ -6,6 +6,9 @@ coverage: test-install
 integration: test-install
 	python -m unittest discover -v -s test/integration
 
+benchmark: test-install
+	python -m unittest discover -v -s test/benchmark
+
 unit: test-install
 	python -m unittest discover -v -s test/unit
 

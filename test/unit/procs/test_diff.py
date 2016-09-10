@@ -7,6 +7,16 @@ import unittest
 from robber import expect
 from flume import *
 
+def equal_sets(first, second):
+    """
+    verifies the elements contained in first list are all present in second list
+    and vice versa but not verifying the order in anyway
+    """
+    for element in first:
+        expect(second).to.contain(element)
+
+    for element in second:
+        expect(first).to.contain(element)
 
 class DiffTest(unittest.TestCase):
 
@@ -122,6 +132,121 @@ class DiffTest(unittest.TestCase):
                 emit(points=C)
             )
             | diff()
+            | memory(ABC2)
+        ).execute()
+
+        expect(ABC1).to.eq(ABC2)
+
+    def test_empty_set_with_timeless_data(self):
+        """
+        A △ A = ∅
+        """
+        AnA = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=A))
+            | diff('foo')
+            | memory(AnA)
+        ).execute()
+
+        expect(AnA).to.eq([])
+
+    def test_neutral_with_timeless_data(self):
+        """
+        A △ ∅ = ∅ """
+        An0 = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+
+        (
+            (emit(points=A), emit(points=[]))
+            | diff('foo')
+            | memory(An0)
+        ).execute()
+
+        expect(An0).to.eq(A)
+
+    def test_commutativity_with_timeless_data(self):
+        """
+        A △ B =  B △ A
+        """
+        AnB = []
+        BnA = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+
+        (
+            (emit(points=A), emit(points=B))
+            | diff('foo')
+            | memory(AnB)
+        ).execute()
+
+        (
+            (emit(points=B), emit(points=A))
+            | diff('foo')
+            | memory(BnA)
+        ).execute()
+
+        # timeless data has no order
+        equal_sets(AnB, BnA)
+
+    def test_associativity_with_timeless_data(self):
+        """
+        A △ (B △ C) = (A △ B) △ C.
+        """
+        ABC1 = []
+        ABC2 = []
+
+        A = [
+            {'foo': '0', 'a': 0},
+            {'foo': '1', 'a': 1},
+            {'foo': '2', 'a': 2}
+        ]
+        B = [
+            {'foo': '1', 'a': 1},
+            {'foo': '3', 'a': 2},
+            {'foo': '5', 'a': 3}
+        ]
+        C = [
+            {'foo': '2', 'a': 3},
+            {'foo': '4', 'a': 4},
+            {'foo': '6', 'a': 5}
+        ]
+
+        (
+            (
+                emit(points=A),
+                (emit(points=B), emit(points=C)) | diff('foo')
+            )
+            | diff('foo')
+            | memory(ABC1)
+        ).execute()
+
+        (
+            (
+                (emit(points=A), emit(points=B)) | diff('foo'),
+                emit(points=C)
+            )
+            | diff('foo')
             | memory(ABC2)
         ).execute()
 

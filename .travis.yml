@@ -17,6 +17,7 @@ script:
   - make coverage
   - make check-examples
   - make integration
+  - make benchmark
 
 after_script:
   - docker stop elastic
