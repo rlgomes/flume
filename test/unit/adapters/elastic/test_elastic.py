@@ -306,7 +306,6 @@ class ElasticTest(unittest.TestCase):
             ])
         ])
 
-
     @mock.patch('flume.adapters.elastic._get_elasticsearch')
     @mock.patch('elasticsearch.helpers.bulk')
     def test_write_timeless_points(self, mock_bulk, mock_elastic):
@@ -321,9 +320,11 @@ class ElasticTest(unittest.TestCase):
         ).execute()
 
         expect(mock_bulk.call_args_list).to.eq([
-            mock.call({}, [{'count': 1, '_type': 'metric', '_index': 'metrics'}]),
-            mock.call({}, [{'count': 2, '_type': 'metric', '_index': 'metrics'}]),
-            mock.call({}, [{'count': 3, '_type': 'metric', '_index': 'metrics'}]),
+            mock.call({}, [
+                {'count': 1, '_type': 'metric', '_index': 'metrics'},
+                {'count': 2, '_type': 'metric', '_index': 'metrics'},
+                {'count': 3, '_type': 'metric', '_index': 'metrics'}
+            ])
         ])
 
     @mock.patch('flume.adapters.elastic._get_elasticsearch')

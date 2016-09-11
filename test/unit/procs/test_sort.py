@@ -24,14 +24,14 @@ class SortTest(unittest.TestCase):
     def test_sort_limits_exceeded(self):
         try:
             (
-                emit(limit=10, start='2016-01-01', every='1s')
+                emit(limit=1025, start='2016-01-01', every='1s')
                 | put(count=count())
                 | sort('count', limit=5)
             ).execute()
 
             raise Exception('previous statement should have failed')
         except FlumeException as exception:
-            expect(exception.message).to.contain('sort buffer overflown, limit is 5, buffering 6')
+            expect(exception.message).to.contain('sort buffer overflown, limit is 5, buffering 1024')
 
     def test_sort_with_no_fields_is_idempotent(self):
         results = []

@@ -21,7 +21,7 @@ class reorder(node):
         last = None
 
         while self.running:
-            points = self.pull(wait=True)
+            points = self.pull()
 
             for point in points:
                 # each point is timestamped upon arrival and only emitted

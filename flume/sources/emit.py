@@ -59,6 +59,15 @@ class emit(node):
                 current_time = self.start
                 buffered = []
 
+                every = moment.duration(self.every, current_time)
+
+                # recalculating the value of every is expensive and only
+                # necessary if you happen to have an every that crosses the
+                # month interval on every loop
+                recalc_every = False
+                if every > moment.duration('4 weeks'):
+                    recalc_every = True
+
                 while current_time < moment.now():
                     count += 1
 
@@ -69,11 +78,13 @@ class emit(node):
                     point = Point(time=current_time)
                     buffered.append(point)
 
-                    if len(buffered) > emit.MAX_BUFFER:
+                    if len(buffered) >= emit.MAX_BUFFER:
                         self.push(buffered)
                         buffered = []
+                    
+                    if recalc_every:
+                        every = moment.duration(self.every, current_time)
 
-                    every = moment.duration(self.every, current_time)
                     current_time += every
 
                 if len(buffered) > 0:

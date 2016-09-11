@@ -3,7 +3,7 @@ union proc
 """
 from collections import OrderedDict
 
-from flume import node
+from flume import node, Point
 
 
 class union(node):
@@ -16,28 +16,42 @@ class union(node):
 
     def loop(self):
         points = []
-        previous_point = None
+        union_points = []
+
+        def unionize(points):
+            """
+            unionizes these points in order they appear in the list which 
+            means the last point in the last overrides any previous field values
+            """
+            upoint = Point()
+
+            for point in points:
+                upoint.update(point)
+
+            return upoint
 
         if len(self.fieldnames) == 0:
             while self.running:
                 points = self.pull()
 
                 for point in points:
-                    if previous_point is None:
-                        previous_point = point
+                    if union_points == []:
+                        union_points.insert(point.__meta__.input_index, point)
 
-                    elif previous_point.time == point.time:
-                        previous_point.update(point)
+                    elif union_points[0].time == point.time:
+                        union_points.insert(point.__meta__.input_index, point)
 
                     else:
-                        self.push(previous_point)
-                        previous_point = point
-            
-            if previous_point is not None:
-                self.push(previous_point)
+                        point_to_push = unionize(union_points)
+                        self.push(point_to_push)
+                        union_points = [point]
+
+            if union_points != []:
+                point_to_push = unionize(union_points)
+                self.push(point_to_push)
 
         else:
-            # when unioning on non `time` field we basically buffer every
+            # when unioning on non-time field we basically buffer every
             # point and emit when we have a complete window
 
             # XXX: non time based union should have a limit on maximum

@@ -173,37 +173,49 @@ class node(object):
 
         if self.inputs is not None:
 
-            if self.inputs_index is None:
-                self.inputs_index = {}
-                index = 0
-                for input in self.inputs:
-                    self.inputs_index[input] = index
-                    index += 1
-
-            for input in self.inputs:
-                input_index = self.inputs_index[input]
-
+            if len(self.inputs) == 1:
+                input = self.inputs[0]
                 try:
-                    points = input.get(wait)
+                    result = input.get(wait)
                 except Empty:
-                    points = []
+                    result = []
+                
+                if len(result) > 0 and result[-1] == self.EOF:
+                    del result[-1]
+                    self.inputs.remove(input)
 
-                for point in points:
-                    point = Point(**point)
+            else:
+                if self.inputs_index is None:
+                    self.inputs_index = {}
+                    index = 0
+                    for input in self.inputs:
+                        self.inputs_index[input] = index
+                        index += 1
 
-                    if point == self.EOF:
-                        self.inputs.remove(input)
-                        continue
+                for input in self.inputs:
+                    input_index = self.inputs_index[input]
 
-                    point.__meta__.flume_path += ('.%s[%s]' % (self.name, input_index))
+                    try:
+                        points = input.get(wait)
+                    except Empty:
+                        points = []
 
-                    if 'time' not in point.keys():
-                        result.append(point)
+                    for point in points:
 
-                    else:
-                        index = bisect.bisect_left(times, point.time)
-                        times.insert(index, point.time)
-                        result.insert(index, point)
+                        if point == self.EOF:
+                            self.inputs.remove(input)
+                            continue
+
+                        point.__meta__.flume_path += ('.%s[%s]' % (self.name, input_index))
+                        point.__meta__.input_index += input_index
+
+                        if 'time' not in point.keys():
+                            result.append(point)
+
+                        else:
+                            index = bisect.bisect_left(times, point.time)
+                            times.insert(index, point.time)
+                            result.insert(index, point)
 
         if self.inputs is None or len(self.inputs) == 0:
             self.running = False
@@ -226,13 +238,17 @@ class node(object):
 
         logger.debug('%s pushing %s points', self, len(points))
 
-        for point in points:
-            for output in self.outputs:
-                if point == self.EOF:
-                    output.put([self.EOF])
+        if len(self.outputs) == 1:
+            self.outputs[0].put(points)
 
-                else:
-                    output.put([Point(**point)])
+        else:
+            for point in points:
+                for output in self.outputs:
+                    if point == self.EOF:
+                        output.put([self.EOF])
+
+                    else:
+                        output.put([Point(**point)])
 
     def __ror__(self, other):
         """

@@ -1,12 +1,15 @@
 
-coverage: test-install
+coverage:
 	coverage run setup.py test
 	coverage report
 
-integration: test-install
+integration:
 	python -m unittest discover -v -s test/integration
 
-unit: test-install
+benchmark:
+	python -m unittest discover -v -s test/benchmark
+
+unit:
 	python -m unittest discover -v -s test/unit
 
 install: requirements.txt flume/*
