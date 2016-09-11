@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+- initial work for benchmark tests
+
+### Changed
+
+- sped up emit and general flow of points through longer pipelines, exact numbers
+  will be monitored by the new benchmark tests
+
 ## [0.4.0] - 2016-09-06
 ### Added
 - testing utility `test.unit.util.redirect` to capture stdout, stderr and
