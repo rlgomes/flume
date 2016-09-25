@@ -216,7 +216,8 @@ class ElasticTest(unittest.TestCase):
         ]
         mock_elastic.return_value = mock.MagicMock()
 
-        (read('elastic', batch=2)).execute()
+        # no implicit sink since we just want to test the elastic read call
+        read('elastic', batch=2).execute(implicit_sink=None)
 
         # 2 batches + eof
         expect(mock_push.call_args_list).to.have.length(3)

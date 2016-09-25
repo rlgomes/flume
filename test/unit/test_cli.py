@@ -41,9 +41,25 @@ class CLITest(unittest.TestCase):
                 'time': '2016-01-01T00:00:00.000Z'
             })
 
+    def test_implicit_sink_can_be_none(self):
+        with redirect() as io:
+            cli.main(['--implicit-sink', 'None',
+                      'read("stdio")'])
+            expect(io.exit).to.eq(0)
+            expect(io.stdout).to.eq('')
+
+    def test_implicit_sink_can_be_changed(self):
+        with redirect() as io:
+            cli.main(['--implicit-sink', 'write("stdio", format="csv")',
+                      'emit(limit=1,start="2016-01-01")'])
+            expect(io.exit).to.eq(0)
+            expect(io.stdout).to.eq('time\r\n' +
+                                    '2016-01-01T00:00:00.000Z\r\n')
+
     def test_executing_a_flume_program_in_debug_mode(self):
         with redirect() as io:
-            cli.main(['-d',
+            cli.main(['--implicit-sink', 'None',
+                      '-d',
                       'emit(limit=1, start="2016-01-01")'])
             expect(io.exit).to.eq(0)
             expect(io.stdout).to.eq('')

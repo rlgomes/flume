@@ -24,18 +24,20 @@ class seq(node):
     def loop(self):
         for pipeline in self.pipelines:
             outputs = list(self.outputs)
+            connector = pipe()
 
             node.init_node(pipeline,
                            inputs=None,
                            outputs=[queue()],
                            parent=None,
+                           child=connector,
                            source=None)
 
-            connector = pipe()
             node.init_node(connector,
                            inputs=pipeline.outputs,
                            outputs=outputs,
                            parent=pipeline,
+                           child=self.child,
                            source=None)
 
-            connector.execute(wait=True)
+            connector.execute(self.config)

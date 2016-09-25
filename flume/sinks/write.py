@@ -39,3 +39,4 @@ class write(sink):
             self.write(buffered)
 
         self.instance.eof()
+

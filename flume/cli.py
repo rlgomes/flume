@@ -8,6 +8,7 @@ import warnings
 import click
 
 from flume import *
+from flume.util import is_string
 
 FLUMERC_LOCATIONS = [
     os.path.join(os.path.expanduser('~'), '.flumerc.py'),
@@ -26,10 +27,14 @@ VERSION = open(os.path.join(os.path.dirname(flume.__file__),
 @click.option('--optimize/--no-optimize',
               default=True,
               help='turns read optimizations on/off, default: on')
+@click.option('--implicit-sink',
+              default=write('stdio'),
+              help='defines the default implicit sink, default: write("stdio")')
 @click.argument('program')
 def main(program=None,
          debug=False,
-         optimize=True):
+         optimize=True,
+         implicit_sink=None):
     """
     simple command line entry point for executing flume programs
     """
@@ -53,8 +58,13 @@ def main(program=None,
                 for thing in dir(module):
                     globals()[thing] = module.__dict__[thing]
 
-    eval(program, globals(), locals()).execute(loglevel=loglevel,
-                                               optimize=optimize)
+    if is_string(implicit_sink):
+        implicit_sink = eval(implicit_sink)
+
+    eval(program, globals(), locals()).execute(wait=True,
+                                               loglevel=loglevel,
+                                               optimize=optimize,
+                                               implicit_sink=implicit_sink)
 
 if __name__ == '__main__':
     main()

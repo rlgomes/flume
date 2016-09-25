@@ -155,13 +155,14 @@ class node(object):
     def init_node(self,
                   source=None,
                   parent=None,
+                  child=None,
                   inputs=None,
                   outputs=None):
         self.source = source
         self.inputs = inputs
         self.outputs = outputs
         self.parent = parent
-        self.child = None
+        self.child = child
 
     def pull(self, wait=True):
         """
@@ -305,8 +306,10 @@ class node(object):
 
     def execute(self,
                 wait=True,
-                loglevel=logger.WARN,
-                optimize=True):
+                loglevel=logging.INFO,
+                optimize=True,
+                implicit_sink=None):
+        self.config.optimize = optimize
 
         if 'inited' not in self.__dict__ or not self.inited:
             raise FlumeException('node.__init__ was never used')
@@ -316,33 +319,51 @@ class node(object):
         if not hasattr(self, 'outputs'):
             node.init_node(self, outputs=[])
 
-        self.config.optimize = optimize
         logger.setLogLevel(loglevel)
 
-        # XXX: pooling here ?
-        thread = threading.Thread(target=self.run)
-        # Daemonize so that when we Ctrl+C the main program then all underlying
-        # threads are instantly killed. Currently don't have any concern about
-        # cleanly closing resources.
-        thread.daemon = True
-        thread.start()
+        if implicit_sink is not None and \
+           not isinstance(self, sink) and \
+           self.child is None:
+            self.outputs = [queue()]
+            this_sink = implicit_sink
+            node.init_node(this_sink,
+                           inputs=self.outputs,
+                           outputs=[],
+                           parent=self,
+                           source=self.source)
 
-        if self.parent:
-            self.parent.execute(wait=wait,
-                                loglevel=loglevel,
-                                optimize=optimize)
+            self.child = this_sink
+            this_sink.execute(wait=wait,
+                              loglevel=loglevel,
+                              optimize=optimize,
+                              implicit_sink=implicit_sink)
 
-        if wait:
-            while thread.is_alive():
-                # if you don't join with a timeout then you block the parent
-                # until the child has completely finished and therefore can't
-                # handle any signals in the parent (ie SIGINT)
-                thread.join(1)
+        else:
+            # XXX: pooling here ?
+            thread = threading.Thread(target=self.run)
+            # Daemonize so that when we Ctrl+C the main program then all underlying
+            # threads are instantly killed. Currently don't have any concern about
+            # cleanly closing resources.
+            thread.daemon = True
+            thread.start()
 
-            exc_info = self.exc_info.get()
+            if self.parent:
+                self.parent.execute(wait=wait,
+                                    loglevel=loglevel,
+                                    optimize=optimize,
+                                    implicit_sink=implicit_sink)
 
-            if exc_info is not None:
-                six.reraise(exc_info[0], exc_info[1], exc_info[2])
+            if wait:
+                while thread.is_alive():
+                    # if you don't join with a timeout then you block the parent
+                    # until the child has completely finished and therefore can't
+                    # handle any signals in the parent (ie SIGINT)
+                    thread.join(1)
+
+                exc_info = self.exc_info.get()
+
+                if exc_info is not None:
+                    six.reraise(exc_info[0], exc_info[1], exc_info[2])
 
     def remove_node(self):
         """
@@ -439,9 +460,10 @@ class splitter(node):
             self.push(points)
 
     def execute(self,
-                wait=True,
-                loglevel=logging.ERROR,
-                optimize=True):
+                wait=False,
+                loglevel=logging.INFO,
+                optimize=True,
+                implicit_sink=None):
 
         def find_root(flume):
             """
@@ -484,20 +506,25 @@ class splitter(node):
                            inputs=self.flume_outputs,
                            outputs=forwarder_inputs,
                            parent=None,
-                           source=source)
+                           source=source,
+                           child=self.child)
 
             forwarder.execute(wait=False,
                               loglevel=loglevel,
-                              optimize=optimize)
+                              optimize=optimize,
+                              implicit_sink=implicit_sink)
 
             # start underlying flumes
             for flume in self.flumes:
+                flume.child = forwarder
                 flume.execute(wait=False,
                               loglevel=loglevel,
-                              optimize=optimize)
+                              optimize=optimize,
+                              implicit_sink=implicit_sink)
 
         # override default behavior to execute the underlying flume
         node.execute(self,
                      wait=False,
                      loglevel=loglevel,
-                     optimize=optimize)
+                     optimize=optimize,
+                     implicit_sink=implicit_sink)
