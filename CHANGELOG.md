@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+...
+
+# [0.4.1] - 2016-09-28
 
 ### Added
 - initial work for benchmark tests
 
 ### Changed
-
 - sped up emit and general flow of points through longer pipelines, exact numbers
   will be monitored by the new benchmark tests
 
