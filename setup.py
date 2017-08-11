@@ -14,7 +14,7 @@ def load(filename):
 
 setup(
     name='flume',
-    version="0.4.1",
+    version="0.5.0",
     author='Rodney Gomes',
     author_email='rodneygomes@gmail.com',
     url='',
