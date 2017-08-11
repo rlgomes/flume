@@ -2,9 +2,9 @@
 github utilities
 """
 
-from flume.util import IS_PY2
+from flume.util import compat
 
-if IS_PY2:
+if compat.IS_PY2:
     from urllib import urlencode
 
 else:

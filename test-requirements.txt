@@ -1,5 +1,8 @@
+bumpversion==0.5.3
 coverage==4.1
 dici==0.4.1
 robber==1.0.1
 bunch==1.0.1
 mock==2.0.0
+py==1.4.34
+pytest==3.2.1
