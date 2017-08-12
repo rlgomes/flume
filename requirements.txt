@@ -1,6 +1,5 @@
 again==1.2.21
 backports.ssl-match-hostname==3.5.0.1
-blessings==1.6
 cairocffi==0.7.2
 CairoSVG==1.0.20
 cffi==1.6.0

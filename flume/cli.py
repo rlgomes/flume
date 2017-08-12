@@ -8,19 +8,16 @@ import warnings
 import click
 
 from flume import *
-from flume.util import is_string
+from flume.util import compat
 
 FLUMERC_LOCATIONS = [
     os.path.join(os.path.expanduser('~'), '.flumerc.py'),
     os.path.join(os.getcwd(), '.flumerc.py'),
 ]
 
-import flume
-VERSION = open(os.path.join(os.path.dirname(flume.__file__),
-                            'VERSION')).read().strip()
 
 @click.command()
-@click.version_option(version=VERSION)
+@click.version_option()
 @click.option('--debug', '-d',
               count=True,
               help='debug mode')
@@ -58,7 +55,7 @@ def main(program=None,
                 for thing in dir(module):
                     globals()[thing] = module.__dict__[thing]
 
-    if is_string(implicit_sink):
+    if compat.is_string(implicit_sink):
         implicit_sink = eval(implicit_sink)
 
     eval(program, globals(), locals()).execute(wait=True,

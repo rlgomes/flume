@@ -4,7 +4,7 @@ flume init module
 - place to define what gets exported from the flume package and how
 """
 
-import flume.logger as logger
+from flume import logger
 
 from flume.point import Point
 

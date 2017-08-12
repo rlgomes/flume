@@ -15,9 +15,9 @@ import six
 from dici import dici
 from flume import moment
 from flume import logger
-from flume import util
+from flume.util import compat
 
-if util.IS_PY2:
+if compat.IS_PY2:
     from Queue import Empty
     from Queue import Queue as queue
 

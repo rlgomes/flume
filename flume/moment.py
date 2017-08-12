@@ -15,7 +15,7 @@ from delta import parse
 from dateutil import parser
 
 from flume.exceptions import FlumeException
-from flume.util import is_string
+from flume.util import compat
 
 
 def __make_utc(dt):
@@ -64,7 +64,7 @@ def date(string):
     if isinstance(string, datetime):
         return string
 
-    elif is_string(string):
+    elif compat.is_string(string):
         dt = None
         try:
             dt = parser.parse(string)
@@ -110,7 +110,7 @@ def duration(string, context=None):
     if isinstance(string, timedelta):
         return string
 
-    elif is_string(string):
+    elif compat.is_string(string):
         delta = parse(string, context=context)
 
         if delta is None:
