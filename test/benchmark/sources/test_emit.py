@@ -33,9 +33,9 @@ class timer(object):
 class EmitTest(unittest.TestCase):
 
     def test_emit_100K_historical_points(self):
-        with timer('emit', timeout=2):
+        with timer('emit', timeout=3):
             emit(limit=100000, start='1970-01-01').execute()
 
     def test_emit_100K_live_points(self):
-        with timer('emit', timeout=3):
+        with timer('emit', timeout=4):
             emit(limit=100000, every='0.000001s').execute()

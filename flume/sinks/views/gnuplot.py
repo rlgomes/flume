@@ -7,10 +7,9 @@ import tempfile
 
 from datetime import datetime
 
-import blessings
-
 from flume.sinks.views.base import base
 from flume.exceptions import FlumeException
+from flume.util import terminal
 
 
 class Gnuplot(base):
@@ -41,10 +40,9 @@ class Gnuplot(base):
 
             self.process = subprocess.Popen(['gnuplot'], stdin=subprocess.PIPE)
 
-            terminal = blessings.Terminal()
-
+            width, height = terminal.get_terminal_size()
             self.write('set terminal %s size %d, %d\n' %
-                       (self.terminal, terminal.width, terminal.height))
+                       (self.terminal, width, height))
 
         else:
             self.write('clear\n')
