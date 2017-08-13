@@ -14,9 +14,11 @@ class MomentTest(unittest.TestCase):
     def test_parsing_a_relative_day_ago_date(self):
         date1 = moment.date('1 day ago')
         date2 = moment.date('24 hours ago')
-        expect(date1).to.eq(date2)
+        assert (date1 <= date2 + moment.duration('1s') or
+                date1 >= date2 - moment.duration('1s'))
 
     def test_parsing_a_relative_year_ago_date(self):
         date1 = moment.date('1 year ago')
         date2 = moment.date('12 months ago')
-        expect(date1).to.eq(date2)
+        assert (date1 <= date2 + moment.duration('1s') or
+                date1 >= date2 - moment.duration('1s'))
