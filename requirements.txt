@@ -22,5 +22,5 @@ requests==2.10.0
 requests-cache==0.4.12
 six==1.10.0
 tinycss==0.3
-urllib3==1.16
+urllib3==1.26.5
 websocket-client==0.37.0
