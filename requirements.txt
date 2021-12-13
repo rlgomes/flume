@@ -10,7 +10,7 @@ dici==0.4.1
 elasticsearch==2.3.0
 ijson==2.3
 ipaddress==1.0.16
-lxml==3.6.0
+lxml==4.6.5
 parsedatetime==2.1
 pycparser==2.14
 pygal==2.2.2
